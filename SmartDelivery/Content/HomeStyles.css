@@ -1,0 +1,427 @@
+﻿/*****************************************/
+/*** start framework ***/
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.centered-underline:after {
+    content: "";
+    width: 30px;
+    height: 1.5px;
+    background-color: #5B95DE;
+    display: block;
+    margin: 10px auto;
+}
+
+/*****************************************/
+/*** start header ***/
+.header {
+    background: url(../Content/Images/header-BG2.jpeg)center fixed;
+    background-size: cover;
+    height: 100vh;
+}
+
+    .header .header-overlaying {
+        width: 100%;
+        background-color: rgba(53,60,66,.6);
+    }
+
+.modal-footer div {
+    margin-top: 6px;
+}
+
+.modal-footer input, button {
+    margin-left: 28%;
+}
+
+.link {
+    font-weight: bold;
+    text-align: center;
+}
+
+    .link a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 15px;
+        letter-spacing: .5px;
+    }
+/*****************************************/
+/*** start home-body ***/
+.header .home-body-title {
+    color: #5B95DE;
+    font-size: 50px;
+    margin-top: 180px;
+    text-align: center;
+    margin-left: 20px;
+}
+
+.header .button {
+    display: block;
+    margin: auto;
+    margin-bottom: 20px;
+    background: #5B95DE;
+    border: none;
+    border-color: #5B95DE;
+    padding: 5px;
+    width: 180px;
+    height: 50px;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    transition: all .3s ease-in-out;
+    letter-spacing: 1px;
+}
+
+    .header .button:hover {
+        color: #5B95DE;
+        background: white;
+        border: 1px solid #5B95DE;
+    }
+
+@media (max-width:785px ) {
+    .header .home-body-title {
+        font-size: 30px;
+    }
+}
+/*****************************************/
+/*** start register form ***/
+.reg-form a {
+    font-weight: bold;
+    font-size: 15px;
+    text-decoration: none;
+}
+
+.reg-form {
+    padding: 40px;
+}
+
+    .reg-form label {
+        margin-right: 10%;
+    }
+
+    .reg-form .row {
+        width: 500px;
+        margin: auto;
+    }
+
+.toggle {
+    display: none;
+}
+
+.custom-file {
+    background-color: #eee;
+    height: 30px;
+    border: 1px solid #ccc;
+    position: relative;
+    z-index: 1;
+}
+
+    .custom-file .file-name {
+        font-size: 14px;
+        display: block;
+    }
+
+    .custom-file input[type="file"] {
+        width: 100%;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 3;
+        cursor: pointer;
+    }
+
+    .custom-file:after {
+        content: "Upload";
+        background-color: #5B95DE;
+        color: #fff;
+        width: 100px;
+        height: 30px;
+        position: absolute;
+        top: -1px;
+        right: 0;
+        text-align: center;
+        line-height: 30px;
+    }
+
+/*****************************************/
+/*** start goto up ***/
+.up {
+    height: 45px;
+    width: 48px;
+    background: #006DB7;
+    display: block;
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1000;
+    text-align: center;
+    cursor: pointer;
+    display: none;
+    transition: all .3s ease-in-out;
+    border: 1.3px solid #006DB7;
+    color: white;
+}
+
+    .up:hover {
+        background: white;
+        color: #006DB7;
+    }
+
+    .up i {
+        margin-top: 12px;
+    }
+
+/*****************************************/
+/*** start services section ***/
+
+.services h2 {
+    margin-top: 50px;
+    color: #1C3F6F;
+}
+
+.service {
+    margin-top: 20px;
+    text-align: center;
+}
+
+    .service h5 {
+        font-size: 20px;
+        color: #5B95DE;
+    }
+
+    .service p {
+        font-size: 15px;
+        color: gray;
+    }
+
+    .service a {
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+        color: #5B95DE;
+    }
+
+    .service i {
+        margin-bottom: 10px;
+        border: 2px solid #D6DDE5;
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        line-height: 2.1em;
+        text-align: center;
+        color: #1C3F6F;
+    }
+
+.services .row {
+    margin-bottom: 40px;
+}
+
+@media (max-width:768px) {
+
+    .service {
+        font-weight: bold;
+        text-align: center;
+    }
+}
+
+/*****************************************/
+/*** start about ***/
+.about {
+    background-color: #F0F0F0;
+    background-size: cover;
+    color: #cbcccd;
+    width: 100%;
+    text-align: center;
+}
+
+.about-content {
+    margin-top: 50px;
+    margin-bottom: 40px;
+}
+
+.about h2,
+.about h4 {
+    color: #1C3F6F;
+    margin-top: 50px;
+}
+
+.about h3 {
+    color: #1C3F6F;
+}
+
+.about p {
+    font-size: 15px;
+    margin-bottom: 30px;
+    text-align: left;
+    color: gray;
+    line-height: 2em;
+    letter-spacing: 1px;
+}
+
+.about .text {
+    background: #FFF;
+    box-shadow: 0px 3px 5px 1px #CCC;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+@media(max-width: 991px) {
+    .about .text {
+        margin-bottom: 20px;
+    }
+}
+
+.about span {
+    color: #5B95DE;
+}
+
+.about h5 {
+    font-size: 15px;
+    color: gray;
+}
+
+.about i {
+    margin-bottom: 5px;
+    color: #1C3F6F;
+}
+
+@media (max-width:768px) {
+    .about-content {
+        margin-top: 0px;
+        margin-bottom: 20px;
+    }
+
+    .about h3 {
+        padding-top: 15px;
+    }
+}
+
+/*****************************************/
+/*** start contact ***/
+.contact {
+    background: url('../Content/Images/contact bg.jpeg') fixed;
+}
+
+    .contact .contact-overlaying {
+        width: 100%;
+        background-color: rgba(53,60,66,.8);
+    }
+
+    .contact h2 {
+        color: #5B95DE;
+        margin-top: 50px;
+    }
+
+    .contact p {
+        color: #D6DDE5;
+        font-size: 15px;
+    }
+
+    .contact .location span {
+        padding: 10px 0px;
+        color: #5B95DE;
+    }
+
+    .contact .social-icon i {
+        color: #D6DDE5;
+        cursor: pointer;
+        transition: all .5s ease-in-out;
+    }
+
+        .contact .social-icon i:hover {
+            transform: scale(1.2,1.2);
+        }
+
+        .contact .social-icon i:nth-of-type(1):hover {
+            color: #3b5998; /*facebook color*/
+        }
+
+        .contact .social-icon i:nth-of-type(2):hover {
+            color: #1da1f2; /*twitter color*/
+        }
+
+        .contact .social-icon i:nth-of-type(3):hover {
+            color: #c13584; /*insta color*/
+        }
+
+    .contact .social-icon:after {
+        content: '';
+        display: block;
+        height: 2px;
+        width: 400px;
+        margin: 30px 20px;
+        background-color: #5B95DE;
+        margin: 30px auto;
+    }
+
+
+    .contact form input {
+        color: white;
+    }
+
+
+form .textarea {
+    padding-bottom: 113px;
+    color: white;
+}
+
+.contact button {
+    display: block;
+    position: relative;
+    margin: auto;
+    background: none;
+    border: 1px solid #5B95DE;
+    margin-bottom: 20px;
+    padding: 5px;
+    width: 180px;
+    height: 50px;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+    .contact button span:first-child {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 100%;
+        background: #5B95DE;
+        z-index: 1;
+    }
+
+    .contact button span:last-child {
+        position: relative;
+        z-index: 2;
+    }
+
+
+@media(max-width:771px) { /* mobile size */
+    .contact .social-icon:after {
+        content: '';
+        display: block;
+        height: 2px;
+        width: 100px;
+        margin: 30px auto;
+        background-color: #1f2024;
+    }
+}
+
+@media(max-width:767px) {
+    .contact .social-icon:after {
+        width: 416px;
+        margin: 30px auto;
+    }
+}
+
+@media(max-width:992px) {
+    .contact .social-icon:after {
+        width: 199px;
+        margin: 30px auto;
+    }
+}
+

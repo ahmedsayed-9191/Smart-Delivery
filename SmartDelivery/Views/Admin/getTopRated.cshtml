@@ -1,0 +1,60 @@
+﻿@model IEnumerable<SmartDelivery.Models.Rate>
+
+@{
+    ViewBag.Title = "getTopRated";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+<div id="chartContainer" style="height: 500px; width: 100%;"></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script>
+    var rate =@Html.Raw(Json.Encode(Model.Select(s => new {s.Employee.FirstName, s.Employee.LastName, s.EmpRate, s.RequestsNumber }).ToList()));
+    employeeData =[];
+   
+
+    
+    window.onload=
+    function draw() {
+        if(rate.length < 1)
+        {
+            alert("There is No Top Rated Employee !");
+            return;
+        }
+
+        else{
+       
+            
+     for(var i =0 ; i <rate.length ; i++)
+     {
+         var rat = (parseFloat(rate[i].EmpRate)*10)/parseFloat(rate[i].RequestsNumber);
+         var nam =rate[i].FirstName+" "+rate[i].LastName;
+         employeeData[i] = {y:rat ,label:nam };
+     }
+
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "light2", // "light1", "light2", "dark1", "dark2"
+	title:{
+		text: "Top Rated Delivery Men"
+	},
+	axisY: {
+		title: ""
+	},
+	data: [{
+		type: "column",
+		showInLegend: true,
+		legendMarkerColor: "grey",
+		legendText: "Rate of 10 ",
+		dataPoints: employeeData
+	}]
+});
+chart.render();
+    
+  
+        }
+    }
+</script>
+
+    
+    
+    

@@ -1,0 +1,131 @@
+﻿@model SmartDelivery.Models.Customer
+
+@{
+    ViewBag.Title = "Register";
+    
+}
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Create Account</title>
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/EditedBootstrap.css"/>
+    <link rel="stylesheet" href="~/Content/HomeStyles.css" />
+    <link rel="icon" href="~/Content/Images/site-icon.png"/>
+</head>
+
+
+
+<h1 class="text-center">Create your account</h1>
+
+    <div class="reg-form">
+
+    @using (Html.BeginForm("Register", "Home", FormMethod.Post, new { @class = "container", enctype = "multipart/form-data" }))
+    {
+        <div class="row">
+            @Html.AntiForgeryToken()
+            <div class="form-horizontal">
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                @Html.HiddenFor(model => model.Authorized)
+                @Html.HiddenFor(model => model.Active)
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-sm-1" })
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", placeholder = "FirstName" } })
+                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-sm-1" })
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", placeholder = "LastName" } })
+                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-sm-1" })
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "Email" } })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-sm-1" })
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = "Phone Number" } })
+                        @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-sm-1" })
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control", placeholder = "Address" } })
+                        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <!--** start custom file **-->
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Photo, htmlAttributes: new { @class = "control-label col-sm-1" })
+                    <div class="col-md-9">
+                        <div class="custom-file form-control text-box single-line">
+                            <span class="file-name">Selecte Image To Upload  </span>
+                            <input class="upload-img" type="file" name="image" id="image" accept="image/*" />
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-sm-1" })
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", placeholder = "Username" } })
+                        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PassWord, htmlAttributes: new { @class = "control-label col-sm-1" })
+                    <div class="col-md-9">
+                        @Html.PasswordFor(model => model.PassWord, new { @class = "form-control", @type = "password", placeholder = "Password" })
+                        @Html.ValidationMessageFor(model => model.PassWord, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <div class="form-group select">
+                    @Html.LabelFor(model => model.CustomerType, "UserType", htmlAttributes: new { @class = "control-label col-sm-1" })
+                    <div class="col-md-9">
+                        @Html.DropDownList("CustomerType", null, "--Select Your Type--", htmlAttributes: new { @class = "form-control", placeholder = "CustomerType" })
+                        @Html.ValidationMessageFor(model => model.CustomerType, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group toggle">
+                    @Html.LabelFor(model => model.ShopName, htmlAttributes: new { @class = "control-label col-sm-1" })
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.ShopName, new { htmlAttributes = new { @class = "form-control", placeholder = "Shop Name" } })
+                        @Html.ValidationMessageFor(model => model.ShopName, "", new { @class = "text-danger"})
+                    </div>
+                </div>
+
+                <div class="col-md-offset-5">
+                    <input type="submit" value="Register" class="btn btn-default" />
+                    @Html.ActionLink("Back to home", "Index")
+                </div>
+
+            </div>
+        </div>
+    }
+        </div>
+
+    
+<script src="~/Scripts/jquery-3.2.1.min.js"></script>
+<script src="~/Scripts/regScript.js"></script>

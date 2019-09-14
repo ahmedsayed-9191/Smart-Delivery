@@ -1,0 +1,128 @@
+﻿@model SmartDelivery.Models.Employee
+
+@{
+    ViewBag.Title = "Details Of SuperVisor";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<h2 class="text-center">Details of supervisor</h2>
+
+<div class="center-the-content">
+    <hr />
+    @*Status of DeliveryMan*@
+    @{
+        string status;
+        if (Model.Authorized == 1)
+        {
+            status = "Authorized";
+        }
+        else
+        {
+            status = "Panned";
+        }
+    }
+
+    <dl class="dl-horizontal">
+        
+            @if (Model.Photo != null)
+            {
+                var base64 = Convert.ToBase64String(Model.Photo);
+                var imgsrc = String.Format("data:image/gif;base64,{0}", base64);
+
+                <img src='@imgsrc' style="max-width:200px;max-height:200px" class="img-circle"/>
+            }
+
+
+        <dt>
+            Fullname
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.Photo)
+        </dt>*@
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.PassWord)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PassWord)
+        </dd>*@
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Salary)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Salary)
+        </dd>
+
+        <dt>
+            Status
+        </dt>
+
+        <dd>
+            @status.ToString()
+        </dd>
+
+        <dt>
+            Holiday
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Day.DayName)
+        </dd>
+
+        <dt>
+           Shift 
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Shift.StartTime)
+        </dd>
+
+    </dl>
+</div>
+<p class="text-center">
+    @Html.ActionLink("Update", "UpdateSuperVisor", new { id = Model.ID } , new { @class = "styled_link" }) 
+</p>
+<a href="@Url.Action("ListAllSuperVisor")" class="back">
+    <i class="fa fa-arrow-left">Back</i>
+</a>

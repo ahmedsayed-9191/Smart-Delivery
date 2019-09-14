@@ -1,0 +1,576 @@
+﻿@model IEnumerable<SmartDelivery.Models.Order>
+@*LAST EDIT 18 JAN 1:27 AM*@
+@{
+    ViewBag.Title = "ListAllOrders";
+    Layout = "~/Views/Shared/_shopLayout.cshtml";
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="~/Content/Request_Delivery.CSS" />
+<script type="text/javascript">
+    function makeDeliveryRequest(destination, desc, quantity, oid) {
+        if (confirm("Deliver Order To Customer ?")) {
+            var orderid = { id: parseInt(oid) };
+            $.ajax({
+
+                type: "POST",
+                url: "/../Shop/AcceptAjaxOrder",
+                data: orderid,
+                success: function (response) {
+                    
+                }
+
+            })
+            document.getElementById("ordersTable").style.display = "none";
+            document.getElementById("_destination").value = destination;
+            document.getElementById("_desc").value = quantity + " Units Of " + desc;
+            document.getElementById("requestDelivery").style.display = "block";
+            document.getElementById("googleMap").style.display = "block";
+            document.getElementById("Destination").style.display = "none";
+            document.getElementById("To").style.display = "block";
+            initAutocomplete();
+        } else {
+            return;
+        }
+
+
+    }
+
+
+    function initAutocomplete() {
+
+        var infoWindow = new google.maps.InfoWindow;
+        infoWindow.setContent("---drag me to the Start Point.");
+        var geocoder = new google.maps.Geocoder;
+        var marker = "";
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+
+            zoom: 16,
+            mapTypeId: 'roadmap'
+        });
+        if ($('#_destination').val() != "") {
+            var dest = $('#_destination').val();
+            var latlngStr = dest.split(',');
+            var destlatlng = { lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1]) };
+            geocoder.geocode({ 'location': destlatlng }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+
+                        document.getElementById("_to").value = results[0].formatted_address;
+
+                    } else {
+                        window.alert('No results found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                map.setCenter(pos);
+                // alert(pos.lat)
+            }, function () {
+                var apiGeolocationSuccess = function (position) {
+
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+
+
+                    map.setCenter(pos);
+                    //alert("API geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
+                };
+                var tryAPIGeolocation = function () {
+                    jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDohzVGcA6LnOTCA9doBW0fR8oWMVwxHAE", function (success) {
+                        apiGeolocationSuccess({ coords: { latitude: success.location.lat, longitude: success.location.lng } });
+                    })
+                  .fail(function (err) {
+                      alert("API Geolocation error! \n\n" + err);
+                  });
+                };
+
+                tryAPIGeolocation();
+            });
+        }
+
+        if (document.getElementById("confirmSource").checked == true) {
+
+
+            var service = new google.maps.DistanceMatrixService();
+            var directionsService = new google.maps.DirectionsService();
+            var directionsDisplay = new google.maps.DirectionsRenderer();
+            var sourceName = $('#_source').val();
+            var destinationName = $('#_destination').val();
+            if (sourceName.localeCompare(destinationName) == 0) {
+                alert("Error ! plz select different Sourse or Destination.");
+                return;
+            }
+            var latlngStr1 = sourceName.split(',');
+            var latlngStr2 = destinationName.split(',');
+            var latlng1 = { lat: parseFloat(latlngStr1[0]), lng: parseFloat(latlngStr1[1]) };
+            var latlng2 = { lat: parseFloat(latlngStr2[0]), lng: parseFloat(latlngStr2[1]) };
+            document.getElementById("buttCreate").disabled = false;
+            map.setCenter(latlng1);
+
+            geocoder.geocode({ 'location': latlng1 }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+
+                        document.getElementById("_from").value = results[0].formatted_address;
+
+                    } else {
+                        window.alert('No results found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+            geocoder.geocode({ 'location': latlng2 }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+
+                        document.getElementById("_to").value = results[0].formatted_address;
+
+                    } else {
+                        window.alert('No results found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+
+            directionsDisplay.setMap(map);
+            var request = {
+                origin: latlng1,
+                destination: latlng2,
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                }
+            });
+
+            service.getDistanceMatrix({
+                origins: [latlng1],
+                destinations: [latlng2],
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC,
+                avoidHighways: false,
+                avoidTolls: false
+            }, function (response, status) {
+                if (status == google.maps.DistanceMatrixStatus.OK &&
+                              response.rows[0].elements[0].status != "ZERO_RESULTS") {
+                    var distance = response.rows[0].elements[0].distance.value;
+                    distance = distance / 1000;
+
+                    var duration = response.rows[0].elements[0].duration.value;
+
+                    duration = parseFloat(duration / 60).toFixed(2);
+                    document.getElementById("_calculatedDistance").value = distance + " km";
+                    document.getElementById("__deliveryTime").value = duration + " minutes";
+
+                    /////////
+                    var distance = document.getElementById("_distance");
+                    var deliveryTime = document.getElementById("_deliveryTime");
+                    distance.style.display = "block";
+                    deliveryTime.style.display = "block";
+
+
+                    document.getElementById("currentLocation").style.display = "none";
+                    document.getElementById("Source").style.display = "none";
+
+                    document.getElementById("From").style.display = "block";
+
+                   
+
+                }
+            });
+
+        }//end if
+        else {
+            var input = document.getElementById('pac-input');
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            map.addListener('bounds_changed', function () {
+                searchBox.setBounds(map.getBounds());
+            });
+            // adds an event listener for the map, and creates a marker when the user clicks on the map at the clicked location.
+            var counter = 0;
+            map.addListener('click', function (e) {
+                if (counter < 1) {
+                    marker = new google.maps.Marker({
+                        position: e.latLng,
+                        map: map,
+                        animation: google.maps.Animation.BOUNCE,
+                        draggable: true
+                    });
+                    map.panTo(e.latLng);
+                    infoWindow.open(map, marker);
+                    $('#_source').val(marker.getPosition().lat() + "," + marker.getPosition().lng());
+                    counter++;
+                }
+                google.maps.event.addListener(marker, 'dragend', function () {
+                    var x = marker.getPosition().lat();
+                    var y = marker.getPosition().lng();
+
+                    $('#_source').val(x + "," + y);
+                });
+            });
+
+
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                var bounds = new google.maps.LatLngBounds();
+                places.forEach(function (place) {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+
+                    marker = new google.maps.Marker({
+                        map: map,
+                        title: place.name,
+                        position: place.geometry.location,
+                        animation: google.maps.Animation.BOUNCE,
+                        draggable: true
+                    });
+
+                    infoWindow.open(map, marker);
+
+                    if (place.geometry.viewport) {
+
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+
+                google.maps.event.addListener(marker, 'dragend', function () {
+                    var x = marker.getPosition().lat();
+                    var y = marker.getPosition().lng();
+                    $('#_source').val(x + "," + y);
+                });
+
+                map.fitBounds(bounds);
+            });
+        }
+
+
+    }//end initAuto
+
+    function setCurrentLocation(value) {
+        var index = value;
+        if (value != 0 && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                if (value == 1) {
+                    $('#_source').val(pos.lat + "," + pos.lng);
+                }
+
+
+            }, function () {
+                var apiGeolocationSuccess = function (position) {
+
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+
+                    if (value == 1) {
+                        $('#_source').val(pos.lat + "," + pos.lng);
+                    }
+                    //alert("API geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
+                };
+                var tryAPIGeolocation = function () {
+                    jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDohzVGcA6LnOTCA9doBW0fR8oWMVwxHAE", function (success) {
+                        apiGeolocationSuccess({ coords: { latitude: success.location.lat, longitude: success.location.lng } });
+                    })
+                  .fail(function (err) {
+                      alert("API Geolocation error! \n\n" + err);
+                  });
+                };
+
+                tryAPIGeolocation();
+            });
+        }
+
+    }// end setCurrentLocation
+
+    //Save Delivery Request
+    function saveDeliveryRequest() {
+        var deliveryRequest = {
+            ShipmentDescription: $('#_desc').val(), Source: $('#_source').val(),
+            Destination: $('#_destination').val()
+        }
+
+        $.ajax({
+
+            type: "POST",
+            url: "/../Shop/RequestDelivery",
+            data: deliveryRequest,
+            success: function (response) {
+                
+                location.reload(true);
+            }
+
+        })
+    }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARZj829jcIqy8ik7UKOwIT_CynjqIe4e0&libraries=places&callback=initAutocomplete"></script>
+
+
+<!-- ------------------- START DELIVERY REQUEST ---------------------------------->
+
+<!-- Button trigger modal -->
+@*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deliver-order">
+    Launch demo modal
+</button>*@
+
+<!-- Modal -->
+<div class="modal fade deliver-order-to-customer" id="deliver-order" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" id="exampleModalLongTitle">Deliver Order</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-sm-12">
+                    <div class="form-horizontal info-section col-sm-6" style="display:none" id="requestDelivery">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            <label class="control-label col-md-4">Shipment Description </label>
+                            <div class="col-md-8">
+                                <input type="text" id="_desc" class="form-control" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="currentLocation">
+                            <label class="control-label col-md-4">Set Current Location as </label>
+                            <div class="col-md-8">
+                                <select class="form-control" id="_currentLocation" onchange="setCurrentLocation(this.value)">
+                                    <option value="0">No I will use Map</option>
+                                    <option value="1">Start Point</option>
+
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="form-group" id="Source">
+                            <label class="control-label col-md-4">Source </label>
+                            <div class="col-md-8">
+                                <input id="_source" , class="form-control" readonly />
+                                <input type="checkbox" id="confirmSource" value="confirm Start Point" onclick="initAutocomplete()"> confirm Start Point.
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="Destination">
+                            <label class="control-label col-md-4">Destination </label>
+                            <div class="col-md-8">
+                                <input id="_destination" , class="form-control" readonly />
+
+                            </div>
+                        </div>
+                        <div class="form-group" id="From" style="display:none">
+                            <label class="control-label col-md-4">From </label>
+                            <div class="col-md-8">
+                                <input id="_from" , class="form-control" readonly />
+
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="To" style="display:none">
+                            <label class="control-label col-md-4">To </label>
+                            <div class="col-md-8">
+                                <input id="_to" , class="form-control" readonly />
+
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="_distance" style="display:none">
+                            <label class="control-label col-md-4">Distance</label>
+                            <div class="col-md-8">
+                                <input type="text" id="_calculatedDistance" class="form-control" readonly />
+
+                            </div>
+                        </div>
+                        <div class="form-group" id="_deliveryTime" style="display:none">
+                            <label class="control-label col-md-4">Expected Delivery Time</label>
+                            <div class="col-md-8">
+                                <input type="text" id="__deliveryTime" class="form-control" readonly />
+
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" id="buttCreate" value="Create" class="btn" disabled="disabled" onclick="saveDeliveryRequest()" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="map-section col-sm-6" id="googleMap" style="display:none">
+                        <input id="pac-input" type="text" placeholder="ادخل مكان بداية الشحن">
+                        <div id="map" class="map"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- ------------------- END DELIVERY REQUEST ---------------------------------->
+
+@foreach (var item in Model) { 
+<div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1 purchase-card" id="ordersTable">
+    <div class="col-xs-6 col-xs-offset-3 purchase-image">
+       @foreach (var image in item.Offer.OfferImages)
+                        {
+                            var base64 = Convert.ToBase64String(image.Image);
+                            var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+
+    <img src='@imgsrc' style="max-width:100px;max-height:100px" class="img-thumbnail"/>
+                        }
+    </div>
+    <div class="col-xs-10 col-xs-offset-1 purchase-details">
+        <div class="col-xs-12">
+            <label class="col-xs-6">Customer Name</label>
+            <span class="col-xs-6">@Html.DisplayFor(modelItem => item.Customer.UserName)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.Offer.OfferDescription)</label>
+            <span class="col-xs-6"> @Html.DisplayFor(modelItem => item.Offer.OfferDescription)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.Quantity)</label>
+            <span class="col-xs-6">@Html.DisplayFor(modelItem => item.Quantity)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.TotalPrice)</label>
+            <span class="col-xs-6">@Html.DisplayFor(modelItem => item.TotalPrice)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.OrderStatu.Status)</label>
+            <span class="col-xs-6">@Html.DisplayFor(modelItem => item.OrderStatu.Status)</span>
+        </div>
+    </div>
+    <div class="col-xs-12 purchase-control">
+        <td>
+            <input type="submit"
+                   value="Accept & Deliver Order"
+                   class="btn-link styled_link" 
+                   data-toggle="modal" data-target="#deliver-order"
+                   onclick="makeDeliveryRequest('@item.Destination','@item.Offer.OfferDescription','@item.Quantity','@item.ID')" />
+        </td>
+        <td>
+
+            @using (Html.BeginForm("RefuseOrder", "Shop", new { id = item.ID }, FormMethod.Post))
+                    {
+                @Html.AntiForgeryToken()
+                <input type="submit" value="Refuse" class="btn-link styled_link" />
+                    }
+        </td>
+        <td>
+            @using (Html.BeginForm("AcceptOrder", "Shop", new { id = item.ID }, FormMethod.Post))
+                {
+                @Html.AntiForgeryToken()
+                <input type="submit" value="Accept" class="btn-link styled_link" />
+                }
+        </td>
+       
+    </div>
+</div>
+
+}
+
+@*<div >
+    <h2>All Orders</h2>
+
+    <table class="table">
+        <tr>
+            <th class="to_be_hidden">
+                
+            </th>
+            <th>
+                
+            </th>
+            <th>       
+                    @Html.DisplayNameFor(model => model.Offer.OfferImages)
+                </th>
+            <th>
+                
+            </th>
+            <th class="to_be_hidden">
+                
+            </th>
+            <th class="to_be_hidden">
+               
+            </th>
+            <th></th>
+        </tr>
+
+        
+        {
+            <tr>
+                <td class="to_be_hidden">
+                    
+                </td>
+                <td>
+                    
+                </td>
+                <td>
+                        
+                    </td>
+                <td>
+                    
+                </td>
+                <td class="to_be_hidden">
+                    
+                </td>
+                <td class="to_be_hidden">
+                    
+                </td>
+
+        </tr>
+        }
+
+    </table>
+</div>*@
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

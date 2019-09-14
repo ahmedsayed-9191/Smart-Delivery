@@ -1,0 +1,73 @@
+﻿@model SmartDelivery.Models.Customer
+
+@{
+    ViewBag.Title = "DeleteAccount";
+    Layout = "~/Views/Shared/_shopLayout.cshtml";
+}
+
+<h2 class="text-center">DeleteAccount</h2>
+<h3 class="text-center">Are you sure you want to delete your Account ?</h3>
+
+<div class="center-the-content">
+    <dl class="dl-horizontal">
+        <dt>
+           Fullname
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShopName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShopName)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn" /> 
+        </div>
+    }
+</div>
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

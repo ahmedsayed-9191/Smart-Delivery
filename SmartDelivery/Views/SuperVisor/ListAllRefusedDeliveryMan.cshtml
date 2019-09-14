@@ -1,0 +1,112 @@
+﻿@model IEnumerable<SmartDelivery.Models.Employee>
+
+@{
+    ViewBag.Title = "Refused Deliveymen";
+    Layout = "~/Views/Shared/_supervisorLayout.cshtml";
+}
+<script type="text/javascript">
+
+    function remove(dm_id) {
+        var DM_ID = { id: parseInt(dm_id), fullName: "a", currentLocation:"a" }
+        $.ajax({
+
+            type: "POST",
+            url: "/../SuperVisor/removeRequest",
+            data: DM_ID,
+            success: function (response) {
+                var rowID = "#" + rid;
+                alert("Employee Removed Successfully.");
+                $(rowID).remove();
+            }
+
+        })
+    }
+</script>
+<h2 class="text-center">All Refused DeliveyMen</h2>
+
+
+
+@foreach (var item in Model)
+{
+    <div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1 purchase-card">
+        <div class="col-xs-6 col-xs-offset-3 request-description">
+            @Html.DisplayFor(modelItem => item.FirstName)
+            @Html.DisplayFor(modelItem => item.LastName)
+        </div>
+        <div class="col-xs-10 col-xs-offset-1 purchase-details">
+            <div class="col-xs-12">
+                <label class="col-xs-6">@Html.DisplayNameFor(model => model.Email)</label>
+                <span class="col-xs-6">@Html.DisplayFor(modelItem => item.Email)</span>
+            </div>
+
+        </div>
+        <div class="col-xs-12 delivery-request-control">
+            @Html.ActionLink("Details", "DetailsOfDeliveryMan", new { id = item.ID }, new { @class = "styled_link" })
+            @Html.ActionLink("ReCreate", "ReCreateDeliveryMan", new { id = item.ID }, new { @class = "styled_link" })
+            <a class="styled_link" onclick="remove('@item.ID')">Remove </a>
+        </div>
+    </div>}
+
+
+
+@*<table class="table">
+    <tr>
+        <th>
+            Fullname
+        </th>
+
+        <th class="to_be_hidden">
+            
+        </th>
+        <th class="to_be_hidden_firstly">
+            
+        </th>
+        <th class="to_be_hidden_firstly">
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th class="to_be_hidden_firstly">
+            @Html.DisplayNameFor(model => model.UserName)
+        </th>
+        <th class="to_be_hidden_firstly">
+            @Html.DisplayNameFor(model => model.Salary)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+               
+            </td>
+            <td class="to_be_hidden">
+                
+            </td>
+            <td class="to_be_hidden_firstly">
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td class="to_be_hidden_firstly">
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td class="to_be_hidden_firstly">
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td class="to_be_hidden_firstly">
+                @Html.DisplayFor(modelItem => item.Salary)
+            </td>
+            <td>
+               
+            </td>
+        </tr>
+    }
+
+</table>*@
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

@@ -1,0 +1,84 @@
+﻿@model SmartDelivery.Models.Order
+
+@{
+    ViewBag.Title = "CancelOrder";
+    Layout = "~/Views/Shared/_normalcustomerLayout.cshtml";
+}
+
+<h2 class="text-center">Cancel Order</h2>
+<h3 class="text-center">Are you sure you want to Cancel this Order?</h3>
+
+<div class="center-the-content">
+    <hr />
+    <dl class="dl-horizontal">
+        <dd>
+            @foreach (var image in Model.Offer.OfferImages)
+            {
+                var i = 0;
+                var base64 = Convert.ToBase64String(image.Image);
+                var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+
+                <img src='@imgsrc' style="max-width:100px;max-height:100px" class="img-thumbnail" />
+                i++;
+                if (i == 1)
+                {
+                    break;
+                }
+            }
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Offer.OfferDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Offer.OfferDescription)
+        </dd>
+        
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrderStatu.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrderStatu.Status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TotalPrice)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Cancel Order" class="btn" />
+        </div>
+    }
+</div>
+<a href="@Url.Action("ListAllPurchases")" class="back">
+    <i class="fa fa-arrow-left">Back</i>
+</a>
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

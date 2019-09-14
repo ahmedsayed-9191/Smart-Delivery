@@ -1,0 +1,163 @@
+﻿@model SmartDelivery.Models.Complaint
+
+@{
+    ViewBag.Title = "Details Of The Complaint";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<h2 class="text-center">Details of the complaint</h2>
+
+<div class="center-the-content">
+    <hr />
+
+@*Status of DeliveryMan*@
+@{
+    string status = "";
+    if (Model.Employee.Authorized == 1)
+    {
+        status = "Authorized";
+    }
+    else if (Model.Employee.Authorized == 0)
+    {
+        status = "Panned";
+    }
+}
+
+    <dl class="dl-horizontal">
+        
+       
+            @if (Model.Employee.Photo != null)
+            {
+                var base64 = Convert.ToBase64String(Model.Employee.Photo);
+                var imgsrc = String.Format("data:image/gif;base64,{0}", base64);
+
+                <img src='@imgsrc' style="max-width:200px;max-height:200px" class="img-circle"/>
+            }
+      
+        <dt>
+            Complaint Description
+        </dt>
+
+        <dd>
+            @Html.TextAreaFor(model => model.Description, new { @class = "", @readonly = "readonly" })
+        </dd>
+
+        <dt>
+            SuperVisor Name
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee1.FirstName)
+            @Html.DisplayFor(model => model.Employee1.LastName)
+        </dd>
+
+        <dt>
+            SuperVisor UserName
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee1.UserName)
+        </dd>
+
+        <dt>
+           Delivery Man Name
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.FirstName)
+            @Html.DisplayFor(model => model.Employee.LastName)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Employee.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Employee.Phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.Phone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Employee.Address)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.Address)
+        </dd>
+
+       
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Employee.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Employee.Salary)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.Salary)
+        </dd>
+
+        <dt>
+            Status
+        </dt>
+
+        <dd>
+            @status.ToString()
+        </dd>
+
+        <dt>
+            Holiday
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.Day.DayName)
+        </dd>
+
+        <dt>
+            Shift
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.Shift.StartTime)
+        </dd>
+       
+
+    </dl>
+    <p>
+        @if (Model.Employee.Authorized == 1)
+        {
+
+            using (Html.BeginForm("PanEmployee", "Admin", new { id = Model.Employee.ID, complaintFlag = 1 }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="submit" value="Pan" class="btn-link styled_link" />
+            }
+
+        }
+        else if (Model.Employee.Authorized == 0)
+        {
+            using (Html.BeginForm("unPanEmployee", "Admin", new { id = Model.Employee.ID, complaintFlag = 1 }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="submit" value="Authorize" class="btn-link styled_link" />
+            }
+        }
+    </p>
+    <a href="@Url.Action("ListAllComplaints")" class="back">
+        <i class="fa fa-arrow-left">Back</i>
+    </a>
+</div>

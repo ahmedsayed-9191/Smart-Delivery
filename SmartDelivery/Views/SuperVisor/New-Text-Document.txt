@@ -1,0 +1,533 @@
+@model IEnumerable<SmartDelivery.Models.DeliveryRequest>
+
+@{
+    ViewBag.Title = "Delivery Requests";
+    Layout = "~/Views/Shared/_supervisorLayout.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="~/Content/Request_Delivery.CSS" />
+<script type="text/javascript">
+   // var delivery = new { id, fullName, currentLocation }
+    var ls = [];
+    var currentLocations = [];
+    var candidates = [];
+    //  & those for tracking
+
+    $(document).ready(function () {
+        $.ajax({
+
+            type: "GET",
+            url: "/../SuperVisor/ListAvailableDeliveryMen",
+
+            success: function (response) {
+               // alert("typeof (response.data) =>  " + typeof (response.data));
+                ls = response.data;
+
+                //alert("1 st" + ls[1].id + " -> " + ls[1].fullName + " -> " + ls[1].currentLocation + " Arraylength" + ls.length);
+
+
+               var add = ls.map(a => a.currentLocation);
+                for (i = 0; i < add.length; i++) {
+                    var current_latlngStr = add[i].split(',');
+                    currentLocations[i] =   { lat: parseFloat(current_latlngStr[0]), lng: parseFloat(current_latlngStr[1]) };
+                }
+                //alert("lenght of locations" + currentLocations.length);
+
+            },
+
+            failure: function (msg) {
+               alert("Error => "+msg);
+            }
+
+        })
+    });
+    function getDeliveryMen(bid,source) {
+        if (source != null) {
+            if (currentLocations.length < 1)
+            {
+                alert("Thers is no Available Delivery Men!");
+                return;
+            }
+            var buttonShow = document.getElementById(bid);
+            buttonShow.setAttribute("type", "hidden");
+
+            sessionStorage.setItem("divId", "_" + bid);
+
+            var destinationStr = source.split(',');
+            var destination = { lat: parseFloat(destinationStr[0]), lng: parseFloat(destinationStr[1]) };
+            var service = new google.maps.DistanceMatrixService();
+            service.getDistanceMatrix(
+              {
+                  origins: currentLocations,
+                  destinations: [destination],
+                  travelMode: google.maps.TravelMode.DRIVING,
+                  unitSystem: google.maps.UnitSystem.METRIC,
+                  avoidHighways: false,
+                  avoidTolls: false
+              }, calcDistance);
+            //alert("Source" + source + " ls : " + ls.length);
+            //alert("1 st" + ls[1].id + " -> " + ls[1].fullName + " -> " + ls[1].currentLocation + " Arraylength" + ls.length + " = >" + currentLocations[1]);
+        }
+    }//end initAuto
+
+    function calcDistance(response, status) {
+        if (status != google.maps.DistanceMatrixStatus.OK) {
+            alert('Error was: ' + status);
+        } else {
+            var origins = response.originAddresses;
+            var destinations = response.destinationAddresses;
+
+
+            for (var i = 0; i < origins.length; i++) {
+                var results = response.rows[i].elements;
+
+                for (var j = 0; j < results.length; j++) {
+
+                    var duration = results[j].duration.value;
+                    duration = parseFloat(duration / 60).toFixed(2);
+                    candidates[i] = { id: ls[i].id, name: ls[i].fullName, time: duration, distance: results[j].distance.text }
+                    //alert(ls[i].fullName + " " + origins[i] + " to " + destinations[j]
+                    //    + ": " + results[j].distance.text + " in "
+                    //    + results[j].duration.text );
+                }
+            }
+            candidates.sort(function (a, b) { return a.time - b.time });
+            var select = document.getElementById("_"+sessionStorage.getItem("divId"));
+            for (var i = 0; i < candidates.length; i++)
+            {
+
+                    var el = document.createElement("option");
+                    el.textContent = candidates[i].name + " (" + candidates[i].time + " minutes" + " ," + candidates[i].distance + ")";
+                    el.value = candidates[i].id;
+                    select.appendChild(el);
+               // alert(candidates[i].id + " - " + candidates[i].time);
+            }
+            document.getElementById(sessionStorage.getItem("divId")).style.display = "block";
+        }
+    }
+
+
+
+    //-----------------------------------------------------------------\\
+
+    function Assign(listID,reqID,divID)
+    {
+        var selectList = document.getElementById(listID);
+        if (selectList.selectedIndex != 0) {
+
+            document.getElementById(listID).disabled = true;
+            document.getElementById("_" + listID).disabled = true;
+            var delManID = selectList.value;
+            var index = ls.findIndex(m => m.id == delManID);
+            var candidteIndex = candidates.findIndex(m => m.id == delManID);
+
+            if(index != -1)
+            {
+                var currentLoc = currentLocations[index].lat + "," + currentLocations[index].lng;
+                // the logic is moved to success function below
+            }
+            else
+            {
+                alert("Error ! this Delivery Man is assigned Already to another Delivery Request. ");
+                document.getElementById(listID).disabled = false;
+                document.getElementById("_" + listID).disabled = false;
+                document.getElementById("_" + listID).checked = false;
+                return;
+            }
+            var deliveryRequest = { requestID: reqID, deliveryManID: delManID, currentLocation: currentLoc }
+            $.ajax({
+
+                type: "POST",
+                url: "/../SuperVisor/AssignDeliveyManToRequest",
+                data: deliveryRequest,
+                success: function (response) {
+
+                    alert("Delivery Man Assigned SuccessFully.");
+                    ls.splice(index, 1);
+                    currentLocations.splice(index, 1);
+                    candidates.splice(candidteIndex, 1);
+                    document.getElementById(divID).style.display = "none";
+
+                }
+
+            })
+        }
+        else {
+            document.getElementById("_" + listID).checked = false;
+            alert("Error! Select Delivery Man plz. ");
+        }
+    }
+    // --------------------- tracking ----------------------//
+
+    var current_location = "";
+    var request_id = 0;
+    var source = "";
+    var destination = "";
+    function setMap(elem) {
+        request_id = $(elem).data('assigned-id');
+        sessionStorage.setItem("request_id", request_id);
+        var R_ID = { id: request_id }
+        console.log("request_id => " + R_ID.id);
+        $.ajax({
+
+            type: "GET",
+            url: "/../NormalCustomer/getjourneyInfo",
+            data: R_ID,
+            success: function (response) {
+                // current_location = response.journy.current_loc;
+                //source = response.journy.source;
+                //destination = response.journy.destination;
+                sessionStorage.setItem("current_location", response.journy.current_loc);
+                sessionStorage.setItem("source", response.journy.source);
+                sessionStorage.setItem("destination", response.journy.destination);
+                //console.log("current_location : " + sessionStorage.getItem("current_location") + " sessionStorage.length : " + sessionStorage.length);
+                //console.log("current_location : " + current_location + " source : " + source + " destination: " + destination);
+            }
+
+        })
+        if (sessionStorage.length > 1) {
+            current_location = sessionStorage.getItem("current_location");
+            source = sessionStorage.getItem("source");
+            destination = sessionStorage.getItem("destination");
+            document.getElementById("tracked_map").style.display = "block";
+            document.getElementById("popupWindow").style.display = "block";
+            initMap(null,null);
+        }
+        // console.log("current_location : " + current_location + " source : " + source + " destination: " + destination);
+
+
+    }// end set map
+
+
+    function initMap(buttID, sourcelatLng) {
+
+        if (buttID != null && sourcelatLng != null)
+        {
+            getDeliveryMen(buttID, sourcelatLng);
+            return;
+        }
+        var service = new google.maps.DistanceMatrixService();
+        var infoWindow = new google.maps.InfoWindow;
+        var geocoder = new google.maps.Geocoder;
+
+        var marker = "";
+        var map = new google.maps.Map(document.getElementById('tracked_map'), {
+
+            zoom: 16,
+            mapTypeId: 'roadmap'
+        });
+        if (sessionStorage.length > 2) {
+            //console.log("From INITMAP => current_location : " + current_location + " source : " + source + " destination: " + destination);
+            var service = new google.maps.DistanceMatrixService();
+            var directionsService = new google.maps.DirectionsService();
+            var directionsDisplay = new google.maps.DirectionsRenderer();
+            var latlngStr1 = source.split(',');
+            var latlngStr2 = destination.split(',');
+            var current_latlngStr = current_location.split(',');
+            var latlng1 = { lat: parseFloat(latlngStr1[0]), lng: parseFloat(latlngStr1[1]) };
+            var latlng2 = { lat: parseFloat(latlngStr2[0]), lng: parseFloat(latlngStr2[1]) };
+            var current_latlng = { lat: parseFloat(current_latlngStr[0]), lng: parseFloat(current_latlngStr[1]) };
+            // var current_latlng = new google.maps.LatLng(parseFloat(current_latlngStr[0]), parseFloat(current_latlngStr[1]));
+
+            //  map.panTo(current_latlng);
+            // map.setZoom(20);
+            map.setCenter(current_latlng);
+
+
+            directionsDisplay.setMap(map);
+            var request = {
+                origin: latlng1,
+                destination: latlng2,
+                travelMode: google.maps.TravelMode.DRIVING
+
+            };
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                }
+            });
+            marker = new google.maps.Marker({
+                position: current_latlng,
+                map: map,
+                animation: google.maps.Animation.BOUNCE,
+                icon: "../delivery.png"
+
+            });
+            // service to get the remaining time & distance to the destination
+            service.getDistanceMatrix({
+                origins: [current_latlng],
+                destinations: [latlng2],
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC,
+                avoidHighways: false,
+                avoidTolls: false
+            }, function (response, status) {
+                if (status == google.maps.DistanceMatrixStatus.OK &&
+                              response.rows[0].elements[0].status != "ZERO_RESULTS") {
+                    var distance = response.rows[0].elements[0].distance.value;
+                    distance = distance / 1000;
+                    var duration = response.rows[0].elements[0].duration.value;
+                    duration = parseFloat(duration / 60).toFixed(2);
+
+                    document.getElementById("_calculatedDistance").value = distance + " ??";
+                    document.getElementById("__deliveryTime").value = duration + " ?????";
+
+                }
+            });
+            // geocoder to get the name of current location
+            geocoder.geocode({ 'location': current_latlng }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+
+                        document.getElementById("_currentLocation").value = results[0].formatted_address;
+
+                    } else {
+                        console.log('No results found');
+                    }
+                } else {
+                    console.log('Geocoder failed due to: ' + status);
+                }
+            });
+
+            setInterval(function () { success(map, marker, service, geocoder, latlng2); }, 60000);
+            // map.setCenter(latlng2);
+        } else {
+
+        }
+
+    }// end init map
+
+
+    function success(map, marker, service, geocoder, destination) {
+
+        var RID = parseInt(sessionStorage.getItem("request_id"));
+        var R_ID = { id: RID }
+        //console.log("=> "+R_ID.id);
+        $.ajax({
+
+            type: "GET",
+            url: "/../NormalCustomer/getCurrentLocation",
+            data: R_ID,
+            success: function (response) {
+
+                sessionStorage.setItem("new_current_location", response.employee.c_location);
+                //alert("you are done : " + response.employee.c_location);
+            }
+
+        })
+        if (sessionStorage.getItem("new_current_location") === null)
+        { }
+        else {
+            current_location = sessionStorage.getItem("new_current_location");
+            console.log("current_location : " + current_location + " new_current_location : " + sessionStorage.getItem("new_current_location"));
+            var current_latlngStr = current_location.split(',');
+            var current_latlng = { lat: parseFloat(current_latlngStr[0]), lng: parseFloat(current_latlngStr[1]) };
+            // var current_latlng = new google.maps.LatLng(parseFloat(current_latlngStr[0]), parseFloat(current_latlngStr[1]));
+
+            marker.setPosition(current_latlng);
+            map.setCenter(current_latlng);
+
+            //   map.panTo(current_latlng);
+            // service to get the remaining time & distance to the destination
+            service.getDistanceMatrix({
+                origins: [current_latlng],
+                destinations: [destination],
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC,
+                avoidHighways: false,
+                avoidTolls: false
+            }, function (response, status) {
+                if (status == google.maps.DistanceMatrixStatus.OK &&
+                              response.rows[0].elements[0].status != "ZERO_RESULTS") {
+                    var distance = response.rows[0].elements[0].distance.value;
+                    distance = distance / 1000;
+                    var duration = response.rows[0].elements[0].duration.value;
+                    duration = parseFloat(duration / 60).toFixed(2);
+
+                    document.getElementById("_calculatedDistance").value = distance + " ??";
+                    document.getElementById("__deliveryTime").value = duration + " ?????";
+
+                }
+            });
+            // geocoder to get the name of current location
+            geocoder.geocode({ 'location': current_latlng }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+
+                        document.getElementById("_currentLocation").value = results[0].formatted_address;
+
+                    } else {
+                        console.log('No results found');
+                    }
+                } else {
+                    console.log('Geocoder failed due to: ' + status);
+                }
+            });
+
+
+        }
+
+    }
+
+    /*
+       1-key1  AIzaSyARZj829jcIqy8ik7UKOwIT_CynjqIe4e0
+       2-key2  AIzaSyDohzVGcA6LnOTCA9doBW0fR8oWMVwxHAE
+
+       */
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDohzVGcA6LnOTCA9doBW0fR8oWMVwxHAE&libraries=places&callback=initMap"></script>
+<h2 class="text-center">All Delivery Requests</h2>
+
+<table class="table">
+    <tr>
+        @* <th>
+                @Html.DisplayNameFor(model => model.CustomerID)
+            </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.ShipmentDescription)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.ShipmentType.Type)
+        </th>
+        @*<th>
+                @Html.DisplayNameFor(model => model.PaymentStatu.PaymentStatus)
+            </th>*@
+
+        <th>
+            @Html.DisplayNameFor(model => model.RequestStatu.RequestStatus)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ShipmentWeight)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            @*<td>
+                    @Html.DisplayFor(modelItem => item.CustomerID)
+                </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.ShipmentDescription)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.ShipmentType.Type)
+            </td>
+            @*<td>
+                    @Html.DisplayFor(modelItem => item.PaymentStatu.PaymentStatus)
+                </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestStatu.RequestStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShipmentWeight)
+            </td>
+
+            <td>
+
+
+                @if (item.StatusID == 1)
+                {
+                    @*@Html.ActionLink("Assign a DeliveryMan", "ListAvailableDeliveryMen", new { id = item.ID }, new { @class = "styled_link" })*@
+                var bid = "req" + item.ID;
+                var did = "_" + bid;
+                var lid = "_" + did;
+                var checkid = "_" + lid;
+                <input type="submit" id="@bid" value="Show Available Delivery Man" class="btn done-btn" onclick="initMap(this.id,'@item.Source')" />
+                    <div class="col-md-8" id="@{@did}" style="display:none">
+                        <input type="checkbox" id="@{@checkid}" value="confirm Delivery Man" onclick="Assign('@lid','@item.ID','@did')"> Assign Request To :
+                        <select class="form-control" id="@{@lid}">
+                            <option value="0">-Select-</option>
+
+
+
+                        </select>
+
+
+                    </div>
+
+
+    }
+    else if (item.StatusID == 2)
+    {
+        <a class="styled_link" data-toggle="modal" data-target="#exampleModalCenter" onclick="setMap(this)" data-assigned-id="@item.ID">Track Shipment</a>
+        <a class="tip" href="@Url.Action(" Chat", new { id=item.DeliveryManID })">
+            <i class="fa fa-envelope fa-2x"></i>
+            <span class="tooltiptext">Chat with this Delivery man</span>
+        </a>
+    }
+                @Html.ActionLink("Details", "DetailsOfDeliveryRequest", new { id = item.ID }, new { @class = "styled_link" })
+
+
+
+            </td>
+        </tr>
+    }
+
+</table>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Track Shipment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="popupWindow" style="display:none">
+                    <div id="tracked_map" style="display:none; height:300px; width:500px ; margin:0 auto"></div>
+                    <br><br>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Current Location</label>
+                        <div class="col-md-5">
+                            <input id="_currentLocation" , class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Expected Delivery Time</label>
+                        <div class="col-md-5">
+                            <input type="text" id="__deliveryTime" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Remaining Distance</label>
+                        <div class="col-md-5">
+                            <input type="text" id="_calculatedDistance" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="" data-dismiss="modal">Close</button>
+                @*<button type="button" class="">Save changes</button><button type="button" class=""></button>*@<button type="button" class=""></button><button type="button" class=""></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

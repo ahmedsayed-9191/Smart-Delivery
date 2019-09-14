@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <!--*** Start Links ***-->
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/EditedBootstrap.css" />
+    <link rel="stylesheet" href="~/Content/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/Content/HomeStyles.css" />
+
+    <link rel="icon" href="~/Content/Images/site-icon.png" />
+    <!--*** End Links ***-->
+
+
+</head>
+<body>
+   
+    <!--*** Start header ***-->
+    <header class="header">
+        <div class="header-overlaying">
+            <!--*** Start navbar ***-->
+            <nav class="navbar navbar-default">
+
+                <div class="container">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <!--*** Start brand ***-->
+                        @*@Html.ActionLink("smart delivery", "Index", "Home", new { @class = "navbar-brand uppercase" })*@
+                        <a href="@Url.Action("Index","Home")" title="Home"><img src="~/Content/Images/mylogo.png" /></a>                        @*@Html.ActionLink("smart delivery", "Index", "Home", new { @class = "navbar-brand uppercase" })*@
+                        <!--*** End brand ***-->
+                    </div>
+
+                    <div class="collapse navbar-collapse"
+                         id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#serv" data-value="serv">Services</a></li>
+                            <li><a href="#" data-value="about">About</a></li>
+                            <li><a href="#" data-value="contact">Contact</a></li>
+                            <li><a href="#" data-toggle="modal" data-target="#loginModal">Signin</a></li>
+                            <li><a href="~/Home/Register">Signup</a></li>
+                        </ul>
+                    </div><!-- /.navbar-collapse -->
+                </div><!--***End container***-->
+            </nav>
+            <!--*** End navbar ***-->
+            <!--*** Start home-body ***-->
+            <div class="home-body text-center">
+                @RenderBody()
+
+            </div>
+            <!--*** End home-body ***-->
+
+        </div> <!--*** End header-overlaying***-->
+    </header>
+    <!--*** End header ***-->
+    <!--*** Start Login popup ***-->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Login to your account</h4>
+                </div>
+                <div class="modal-body">
+                    @if (TempData["msg10"] != null)
+                    {
+                        @Html.Raw(TempData["msg10"])
+                        TempData["msg10"] = null;
+                    }
+                    @model SmartDelivery.Models.Employee
+
+                    @using (Html.BeginForm("LogIn", "Home", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-horizontal login-form">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-4" })
+                                <div class="col-md-8">
+                                    @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", placeholder = "Username" } })
+                                    @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PassWord, htmlAttributes: new { @class = "control-label col-md-4" })
+                                <div class="col-md-8">
+                                    @Html.PasswordFor(model => model.PassWord, new { @class = "form-control", placeholder = "Password" })
+                                    @Html.ValidationMessageFor(model => model.PassWord, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                @*<button type="button" class="btn btn-primary">Login</button>*@
+                                <input type="submit" value="Sign in" class="btn btn-default col-md-3" />
+                                <button type="button" class="btn btn-default col-md-3" data-dismiss="modal">Close</button>
+                            </div>
+                            <div class="link">Or @Html.ActionLink("Create an account", "Register", "Home")</div>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--*** End Login popup ***-->
+    <!--*** Start registration popup ***-->
+    <div class="modal fade" id="regModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Create Your Account</h4>
+                </div>
+                <div class="modal-body">
+                    registration form
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Login</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--*** End registration popup ***-->
+    <!--*** Start goto up ***-->
+    <div class="up" id="scroll-up" title="Back to top">
+        <i class="fa fa-chevron-up fa"></i>
+    </div>
+    <!--*** End goto up ***-->
+    <!--*** start services section  ***-->
+    <div class="services" id="serv">
+        <div class="container">
+            <div class="row">
+                <h2 class="uppercase text-center centered-underline">our services</h2>
+                <div class="col-md-3  service">
+                    <i class="fa fa-rocket fa-3x"></i>
+                    <h5>Deliver Your Materials</h5>
+                    <p class="lead">
+                        After login you can request delivery service .
+                        <a data-toggle="modal" data-target="#loginModal">Login</a> now!
+                    </p>
+
+                </div>
+                <div class="col-md-3  service">
+                    <i class="fa fa-location-arrow fa-3x"></i>
+                    <h5>Track The Delivery Process</h5>
+                    <p class="lead">Track your delivery service</p>
+
+                </div>
+                <div class="col-md-3  service ">
+                    <i class="fa fa-phone fa-3x"></i>
+                    <h5>Realtime Communication</h5>
+                    <p class="lead">You can chat with delivery man</p>
+
+                </div>
+                <div class="col-md-3  service">
+                    <i class="fa fa-cart-plus fa-3x"></i>
+                    <h5>Shopping Offers</h5>
+                    <p class="lead">You can find latest offers</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--*** end services section  ***-->
+    <!--*** Start About ***-->
+    <div class="about text-center" id="about">
+        <div class="container">
+            <h2 class="text-center centered-underline">ABOUT US</h2>
+            <div class="row about-content">
+                <div class="col-md-6 text">
+                    <h3 class="centered-underline">How Smart Delivery Serve You</h3>
+                    <p class="lead text-center">
+                        <span class="uppercase">smart delivery</span> system help you to deliver materials
+                        from place to another by providing helpful features like tracking ,
+                        real time chating , find shortest path for the shipment process,
+                        as well as it can be used by Owners
+                        of stores that does not have a delivery service.
+                    </p>
+                </div>
+                <div class="features col-md-6">
+                    <div class="col-md-3 col-xs-6">
+                        <i class="fa fa-shopping-bag fa-3x"></i>
+                        <h5>Deliver purchases</h5>
+                    </div>
+                    <div class="col-md-3 col-xs-6">
+                        <i class="fa fa-file-text fa-3x"></i>
+                        <h5>Valuable Documents</h5>
+                    </div>
+                    <div class="col-md-3 col-xs-6">
+                        <i class="fa fa-television fa-3x"></i>
+                        <h5>Electric Devices</h5>
+                    </div>
+                    <div class="col-md-3 col-xs-6">
+                        <i class="fa fa-mobile fa-3x"></i>
+                        <h5>Electronic Devices</h5>
+                    </div>
+                    <div class="col-md-3 col-xs-6">
+                        <i class="fa fa-location-arrow fa-3x"></i>
+                        <h5>Shortest Way</h5>
+                    </div>
+                    <div class="col-md-3 col-xs-6">
+                        <i class="fa fa-child fa-3x"></i>
+                        <h5>Save Efforts</h5>
+                    </div>
+                    <div class="col-md-3 col-xs-6">
+                        <i class="fa fa-clock-o fa-3x"></i>
+                        <h5>Save Time</h5>
+                    </div>
+                    <div class="col-md-3 col-xs-6">
+                        <i class="fa fa-usd fa-3x"></i>
+                        <h5>Save Money</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--*** End About ***-->
+    <!--*** Start Contact ***-->
+    <div class="contact" id="contact">
+        <div class="container contact-overlaying">
+            <H2 class="uppercase text-center centered-underline">Contact Us</H2>
+            <p class="text-center">We're open for any suggestion. Just tell us wht you Need. </p>
+            <div class="row location">
+                <div class="col-sm-4 text-center">
+                    <span class="fa fa-phone fa-3x fa-fw"></span>
+                    <p>(+02) 0115 362 3840 <br> (02) 389 63004</p>
+                </div>
+                <div class="col-sm-4 text-center">
+                    <span class="fa fa-envelope fa-3x fa-fw"></span>
+                    <p>samrt202@gmail.com</p>
+                </div>
+                <div class="col-sm-4 text-center">
+                    <span class="fa fa-map-marker fa-3x fa-fw"></span>
+                    <p>fci-h hellwan university<br>Cairo Egypt</p>
+                </div>
+            </div>
+            <div class="col-md-12 social-icon text-center">
+                <i class="fa fa-facebook fa-2x fa-fw"></i>
+                <i class="fa fa-twitter fa-2x fa-fw"></i>
+                <i class="fa fa-instagram fa-2x fa-fw"></i>
+            </div>
+            <div class="row">
+                <form>
+                    <div class="col-md-6">
+                        <input class="form-control" type="text" placeholder="Your Name">
+                        <input class="form-control" type="email" placeholder="Your Email">
+                        <input class="form-control" type="text" placeholder="Subject">
+                        <p class="text-center footer">Copyright ©2018</p>
+                    </div>
+                    <div class="col-md-6">
+                        <textarea class="form-control textarea" placeholder="your Message"></textarea>
+                        <button>
+                            <span></span>
+                            <span>Send Message <i class="fa fa-send"></i> </span>
+
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--*** End Contact ***-->
+    <!--*** Start scripts ***-->
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/Scripts.js"></script>
+    <!--*** End scripts ***-->
+</body>
+</html>

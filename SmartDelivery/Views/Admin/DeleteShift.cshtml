@@ -1,0 +1,47 @@
+﻿@model SmartDelivery.Models.Shift
+
+@{
+    ViewBag.Title = "Delete Shift";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<h2 class="text-center">Delete Shift</h2>
+<h3 class="text-center">Are you sure you want to delete this shift?</h3>
+
+<div class="col-md-5">
+    <dl class="dl-horizontal text-center">
+        <dt>
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EndTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EndTime)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            @Html.HiddenFor(model=>model.ID)
+            @Html.HiddenFor(model => model.StartTime)
+            @Html.HiddenFor(model => model.EndTime)
+            <input type="submit" value="Delete" class="btn"/> 
+        </div>
+    }
+
+
+
+</div>
+<a href="@Url.Action("ListAllShifts")" class="back">
+    <i class="fa fa-arrow-left">Back</i>
+</a>

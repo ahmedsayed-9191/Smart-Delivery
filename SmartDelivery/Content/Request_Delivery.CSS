@@ -1,0 +1,48 @@
+
+input[type=text], select {
+    width: 60%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.map {
+        height: 400px;
+        width: 500px;
+        align-items: center;
+        /*border:1px solid #5B95DE;*/
+    }
+
+@media(max-width:1034px) {
+    .map{
+        width:350px;
+    }
+}
+
+
+@media(max-width:766px) {
+    .map ,.info-section{
+        width:400px;
+        margin:auto;
+        display:block;
+    }
+}
+@media(max-width:433px) {
+    .map ,.info-section{
+        width:250px;
+        margin:auto;
+        display:block;
+    }
+    textarea{
+        width:200px;
+    }
+}
+
+label{
+    margin-top:5px;
+}
+.info-section {
+    /*border: 1px solid #5B95DE;*/
+}

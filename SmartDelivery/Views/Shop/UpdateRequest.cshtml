@@ -1,0 +1,431 @@
+﻿@model SmartDelivery.Models.DeliveryRequest
+
+@{
+    ViewBag.Title = "UpdateRequest";
+    Layout = "~/Views/Shared/_shopLayout.cshtml";
+}
+<link rel="stylesheet" href="~/Content/Request_Delivery.CSS"/>
+<style>
+    body {
+        background: white;
+    }
+</style>
+<h2>UpdateRequest</h2>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+    var map = "";
+    var marker = "";
+    var directionsService = "";
+    var directionsDisplay = "";
+
+    var statusID = parseInt('@Model.StatusID');
+
+    $(document).ready(function () {
+        document.getElementById("confirmDestination").checked = true;
+        document.getElementById("confirmDestination").disabled = true;
+    });
+
+    function initAutocomplete() {
+
+        var infoWindow = new google.maps.InfoWindow;
+        var infoWindow2 = new google.maps.InfoWindow;
+        var geocoder = new google.maps.Geocoder;
+        var currLocation = "";
+         map = new google.maps.Map(document.getElementById('map'), {
+
+            zoom: 17,
+            mapTypeId: 'roadmap'
+        });
+
+
+         if (document.getElementById("confirmSource").checked == true) {
+             document.getElementById("Source").style.display = "none";
+             document.getElementById("Destination").style.display = "none";
+             document.getElementById("From").style.display = "block";
+             document.getElementById("To").style.display = "block";
+             document.getElementById("_currentLocation").disabled = true;
+             
+            var service = new google.maps.DistanceMatrixService();
+            directionsService = new google.maps.DirectionsService();
+            directionsDisplay = new google.maps.DirectionsRenderer();
+
+            var sourceName = $('#_source').val();
+            var destinationName = $('#_destination').val();
+            
+              
+            var latlngStr1 = sourceName.split(',');
+            var latlngStr2 = destinationName.split(',');
+            var latlng1 = { lat: parseFloat(latlngStr1[0]), lng: parseFloat(latlngStr1[1]) };
+            var latlng2 = { lat: parseFloat(latlngStr2[0]), lng: parseFloat(latlngStr2[1]) };
+            map.setCenter(latlng1);
+            geocoder.geocode({ 'location': latlng1 }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+
+                        document.getElementById("_from").value = results[0].formatted_address;
+
+                    } else {
+                        window.alert('No results found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+                geocoder.geocode({ 'location': latlng2 }, function (results, status) {
+                    if (status === 'OK') {
+                        if (results[0]) {
+
+                            document.getElementById("_to").value = results[0].formatted_address;
+
+                        } else {
+                            window.alert('No results found');
+                        }
+                    } else {
+                        window.alert('Geocoder failed due to: ' + status);
+                    }
+                });
+
+                directionsDisplay.setMap(map);
+                var request = {
+                    origin: latlng1,
+                    destination: latlng2,
+                    travelMode: google.maps.TravelMode.DRIVING
+                };
+                directionsService.route(request, function (response, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        directionsDisplay.setDirections(response);
+                    }
+                });
+
+                service.getDistanceMatrix({
+                    origins: [latlng1],
+                    destinations: [latlng2],
+                    travelMode: google.maps.TravelMode.DRIVING,
+                    unitSystem: google.maps.UnitSystem.METRIC,
+                    avoidHighways: false,
+                    avoidTolls: false
+                }, function (response, status) {
+                    if (status == google.maps.DistanceMatrixStatus.OK &&
+                                  response.rows[0].elements[0].status != "ZERO_RESULTS")
+                    {
+                        var distance = response.rows[0].elements[0].distance.value;
+                        distance = distance / 1000;
+
+                        var duration = response.rows[0].elements[0].duration.value;
+
+                        duration = parseFloat(duration / 60).toFixed(2);
+                        document.getElementById("_calculatedDistance").value = distance + " كم";
+                        document.getElementById("__deliveryTime").value = duration + " دقيقة";
+                        document.getElementById("_distance").style.display = "block";
+                        document.getElementById("_deliveryTime").style.display = "block";
+    
+                    }
+                });
+            
+            
+        } //END Clicks
+
+            //////// set source & destination points \\\\\\\\\\\\\\\
+        else {
+
+            $(document).ready(function () {
+                var sourceName = $('#_source').val();
+                var destinationName = $('#_destination').val();
+                var latlngStr1 = sourceName.split(',');
+                var latlngStr2 = destinationName.split(',');
+                var latlng1 = { lat: parseFloat(latlngStr1[0]), lng: parseFloat(latlngStr1[1]) };
+                var latlng2 = { lat: parseFloat(latlngStr2[0]), lng: parseFloat(latlngStr2[1]) };
+                directionsService = new google.maps.DirectionsService();
+                directionsDisplay = new google.maps.DirectionsRenderer();
+                directionsDisplay.setMap(map);
+                var request = {
+                    origin: latlng1,
+                    destination: latlng2,
+                    travelMode: google.maps.TravelMode.DRIVING
+                };
+                directionsService.route(request, function (response, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        directionsDisplay.setDirections(response);
+                    }
+                });
+
+            });
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    infoWindow.setPosition(pos);
+
+                    map.setCenter(pos);
+                    // alert(pos.lat)
+                }, function () {
+                    var apiGeolocationSuccess = function (position) {
+
+                        var pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+
+                        infoWindow.setPosition(pos);
+
+                        map.setCenter(pos);
+                        //alert("API geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
+                    };
+                    var tryAPIGeolocation = function () {
+                        jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDohzVGcA6LnOTCA9doBW0fR8oWMVwxHAE", function (success) {
+                            apiGeolocationSuccess({ coords: { latitude: success.location.lat, longitude: success.location.lng } });
+                        })
+                      .fail(function (err) {
+                          alert("API Geolocation error! \n\n" + err);
+                      });
+                    };
+
+                    tryAPIGeolocation();
+                });
+            }
+
+
+            var input = document.getElementById('pac-input');
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            map.addListener('bounds_changed', function () {
+                searchBox.setBounds(map.getBounds());
+            });
+
+            // adds an event listener for the map, and creates a marker when the user clicks on the map at the clicked location.
+            var counter = 0;
+            map.addListener('click', function (e) {
+                if (counter < 1) {
+                    marker = new google.maps.Marker({
+                        position: e.latLng,
+                        map: map,
+                        animation: google.maps.Animation.BOUNCE,
+                        draggable: true
+                    });
+                    map.panTo(e.latLng);
+                    infoWindow.open(map, marker);
+                    $('#_source').val(marker.getPosition().lat() + "," + marker.getPosition().lng());
+                    counter++;
+                }
+                google.maps.event.addListener(marker, 'dragend', function () {
+                    var x = marker.getPosition().lat();
+                    var y = marker.getPosition().lng();
+
+                    $('#_source').val(x + "," + y);
+                });
+            });
+
+
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                var bounds = new google.maps.LatLngBounds();
+                places.forEach(function (place) {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+
+                    marker = new google.maps.Marker({
+                        map: map,
+                        title: place.name,
+                        position: place.geometry.location,
+                        animation: google.maps.Animation.BOUNCE,
+                        draggable: true
+                    });
+
+                    infoWindow.open(map, marker);
+
+                    if (place.geometry.viewport) {
+
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+
+                google.maps.event.addListener(marker, 'dragend', function () {
+                    var x = marker.getPosition().lat();
+                    var y = marker.getPosition().lng();
+                    $('#_source').val(x + "," + y);
+                });
+
+                map.fitBounds(bounds);
+            });
+
+        }
+    }
+
+
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    /*
+    1-key1  AIzaSyARZj829jcIqy8ik7UKOwIT_CynjqIe4e0
+    2-key2  AIzaSyDohzVGcA6LnOTCA9doBW0fR8oWMVwxHAE
+
+    */
+    // set Current Location as start or end point \\\\\\\\\\\\\\\\\\
+    function setCurrentLocation(value) {
+        var index = value;
+     
+           
+       
+                var apiGeolocationSuccess = function (position) {
+
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    if (value == 1) {
+                        $('#_source').val(pos.lat + "," + pos.lng);
+                    }
+
+                    //alert("API geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
+                };
+                var tryAPIGeolocation = function () {
+                    jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDohzVGcA6LnOTCA9doBW0fR8oWMVwxHAE", function (success) {
+                        apiGeolocationSuccess({ coords: { latitude: success.location.lat, longitude: success.location.lng } });
+                    })
+                  .fail(function (err) {
+                      alert("API Geolocation error! \n\n" + err);
+                  });
+                };
+
+                tryAPIGeolocation();
+            
+        
+
+    }// end setCurrentLocation
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARZj829jcIqy8ik7UKOwIT_CynjqIe4e0&libraries=places&callback=initAutocomplete"></script>
+
+<div class="map-section col-md-6">
+    <input id="pac-input" type="text" placeholder="ادخل مكان بداية الشحن">
+    <div id="map" class="map"></div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal info-section col-md-6">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.CustomerID)
+        @Html.HiddenFor(model => model.StatusID)
+        @Html.HiddenFor(model => model.DeliveryManID)
+        @Html.HiddenFor(model => model.Paid)
+        @Html.HiddenFor(model => model.ShipmentWeight)
+        <div class="form-group" style="display:none">
+
+           
+            
+
+        </div>
+
+
+        <div class="form-group" id="currentLocation">
+            <label class="control-label col-md-4">Set Current Location as </label>
+            <div class="col-md-8">
+                <select class="form-control" id="_currentLocation" onchange="setCurrentLocation(this.value)">
+                    <option value="0">Nothing</option>
+                    <option value="1">Start Point</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-group" id="Source">
+            @Html.LabelFor(model => model.Source, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Source, new { htmlAttributes = new { @id = "_source", @class = "form-control", @readonly = "readonly" } })
+                <input type="checkbox" id="confirmSource" value="confirm Start Point" onclick="initAutocomplete()"> confirm Start Point.
+                @Html.ValidationMessageFor(model => model.Source, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" id="Destination">
+            @Html.LabelFor(model => model.Destination, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Destination, new { htmlAttributes = new { @id = "_destination", @class = "form-control", @readonly = "readonly" } })
+                <input type="checkbox" id="confirmDestination" value="confirm End Point" > confirm End Point.
+                @Html.ValidationMessageFor(model => model.Destination, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" id="From" style="display:none">
+            <label class="control-label col-md-4">From </label>
+            <div class="col-md-8">
+                <input id="_from" , class="form-control" readonly />
+
+            </div>
+        </div>
+
+        <div class="form-group" id="To" style="display:none">
+            <label class="control-label col-md-4">To </label>
+            <div class="col-md-8">
+                <input id="_to" , class="form-control" readonly />
+
+            </div>
+        </div>
+
+        <div class="form-group" id="_distance" style="display:none">
+            <label class="control-label col-md-4">Distance</label>
+            <div class="col-md-8">
+                <input type="text" id="_calculatedDistance" class="form-control" readonly />
+
+            </div>
+        </div>
+        <div class="form-group" id="_deliveryTime" style="display:none">
+            <label class="control-label col-md-4">Expected Delivery Time</label>
+            <div class="col-md-8">
+                <input type="text" id="__deliveryTime" class="form-control" readonly />
+
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            @Html.LabelFor(model => model.ShipmentDescription, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @*@Html.TextAreaFor(model => model.ShipmentDescription, new { htmlAttributes = new { @readonly = "readonly", @class = "form-control" } })*@
+                @Html.EditorFor(model => model.ShipmentDescription, new { htmlAttributes = new {  @class = "form-control", @readonly = "readonly" } })
+                 @Html.ValidationMessageFor(model => model.ShipmentDescription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Update" class="btn" />
+            </div>
+        </div>
+    </div>
+}
+
+
+<script src="~/Scripts/Scripts.js"></script>
+<div>
+    @Html.ActionLink("Back to List", "ListDeliveryRequests")
+</div>
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

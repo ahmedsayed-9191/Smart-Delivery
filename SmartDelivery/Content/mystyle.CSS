@@ -1,0 +1,13 @@
+.back {
+    position: absolute;
+    border: 2px solid #2399d5;
+    text-align: center;
+    width: 100px;
+    height: 44px;
+    padding: 9px;
+    background: white;
+}
+.back:hover{
+
+}
+

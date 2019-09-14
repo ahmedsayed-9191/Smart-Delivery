@@ -1,0 +1,603 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SmartDeliveryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Complaint">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="DeliveryManID" Type="Int32" Nullable="false" />
+    <Property Name="SuperVisorID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Employee" Relationship="Self.FK_Complaint_Employee" FromRole="Complaint" ToRole="Employee" />
+    <NavigationProperty Name="Employee1" Relationship="Self.FK_Complaint_Employee1" FromRole="Complaint" ToRole="Employee" />
+  </EntityType>
+  <EntityType Name="Customer">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="PassWord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Authorized" Type="Int32" Nullable="false" />
+    <Property Name="Active" Type="Int32" Nullable="false" />
+    <Property Name="CustomerType" Type="Int32" />
+    <Property Name="ShopName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="CustomerType1" Relationship="Self.FK_Customer_CustomerType" FromRole="Customer" ToRole="CustomerType" />
+    <NavigationProperty Name="Offers" Relationship="Self.FK_Offer_Customer" FromRole="Customer" ToRole="Offer" />
+    <NavigationProperty Name="Orders" Relationship="Self.FK_Order_Customer" FromRole="Customer" ToRole="Order" />
+  </EntityType>
+  <EntityType Name="CustomerType">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CustomerType1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Customers" Relationship="Self.FK_Customer_CustomerType" FromRole="CustomerType" ToRole="Customer" />
+  </EntityType>
+  <EntityType Name="Day">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="DayName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Holidays" Relationship="Self.FK_Holiday_Day" FromRole="Day" ToRole="Holiday" />
+  </EntityType>
+  <EntityType Name="DeliveryRequest">
+    <Key>
+      <PropertyRef Name="CustomerID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CustomerID" Type="Int32" Nullable="false" />
+    <Property Name="ShipmentDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="ShipmentWeight" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+    <Property Name="Source" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Destination" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Cost" Type="Decimal" Precision="10" Scale="4" />
+    <Property Name="RecievingCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="ShipmentTypeID" Type="Int32" />
+    <Property Name="StatusID" Type="Int32" Nullable="false" />
+    <Property Name="DeliveryManID" Type="Int32" />
+    <Property Name="CurrentLocation" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Employee" Relationship="Self.FK_DeliveryRequest_Employee" FromRole="DeliveryRequest" ToRole="Employee" />
+    <NavigationProperty Name="PaymentOnDeliveryRequest" Relationship="Self.FK_DeliveryRequest_PaymentOnDeliveryRequest" FromRole="DeliveryRequest" ToRole="PaymentOnDeliveryRequest" />
+    <NavigationProperty Name="RequestStatu" Relationship="Self.FK_DeliveryRequest_RequestStatus" FromRole="DeliveryRequest" ToRole="RequestStatus" />
+    <NavigationProperty Name="ShipmentType" Relationship="Self.FK_DeliveryRequest_ShipmentType" FromRole="DeliveryRequest" ToRole="ShipmentType" />
+  </EntityType>
+  <EntityType Name="Employee">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="PassWord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Salary" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+    <Property Name="Authorized" Type="Int32" Nullable="false" />
+    <Property Name="Active" Type="Int32" Nullable="false" />
+    <Property Name="EmployeeType" Type="Int32" />
+    <Property Name="ShiftID" Type="Int32" />
+    <NavigationProperty Name="Complaints" Relationship="Self.FK_Complaint_Employee" FromRole="Employee" ToRole="Complaint" />
+    <NavigationProperty Name="Complaints1" Relationship="Self.FK_Complaint_Employee1" FromRole="Employee" ToRole="Complaint" />
+    <NavigationProperty Name="DeliveryRequests" Relationship="Self.FK_DeliveryRequest_Employee" FromRole="Employee" ToRole="DeliveryRequest" />
+    <NavigationProperty Name="EmployeeType1" Relationship="Self.FK_Employee_EmployeeType" FromRole="Employee" ToRole="EmployeeType" />
+    <NavigationProperty Name="Shift" Relationship="Self.FK_Employee_Shift" FromRole="Employee" ToRole="Shift" />
+    <NavigationProperty Name="Holidays" Relationship="Self.FK_Holiday_Employee" FromRole="Employee" ToRole="Holiday" />
+  </EntityType>
+  <EntityType Name="EmployeeType">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EmployeeType1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Employees" Relationship="Self.FK_Employee_EmployeeType" FromRole="EmployeeType" ToRole="Employee" />
+  </EntityType>
+  <EntityType Name="Holiday">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EmployeeID" Type="Int32" Nullable="false" />
+    <Property Name="DayID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Day" Relationship="Self.FK_Holiday_Day" FromRole="Holiday" ToRole="Day" />
+    <NavigationProperty Name="Employee" Relationship="Self.FK_Holiday_Employee" FromRole="Holiday" ToRole="Employee" />
+  </EntityType>
+  <EntityType Name="Offer">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OfferDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="Price" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+    <Property Name="ShopID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Customer" Relationship="Self.FK_Offer_Customer" FromRole="Offer" ToRole="Customer" />
+    <NavigationProperty Name="OfferImages" Relationship="Self.FK_OfferImages_Offer" FromRole="Offer" ToRole="OfferImages" />
+    <NavigationProperty Name="OrderItems" Relationship="Self.FK_OrderItems_Offer" FromRole="Offer" ToRole="OrderItems" />
+  </EntityType>
+  <EntityType Name="OfferImage">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Image" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
+    <Property Name="OfferID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Offer" Relationship="Self.FK_OfferImages_Offer" FromRole="OfferImages" ToRole="Offer" />
+  </EntityType>
+  <EntityType Name="Order">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TotalPrice" Type="Decimal" Precision="10" Scale="4" />
+    <Property Name="CustomerID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Customer" Relationship="Self.FK_Order_Customer" FromRole="Order" ToRole="Customer" />
+    <NavigationProperty Name="OrderItems" Relationship="Self.FK_OrderItems_Order" FromRole="Order" ToRole="OrderItems" />
+    <NavigationProperty Name="PaymentOnOrders" Relationship="Self.FK_PaymentOnOrder_Order" FromRole="Order" ToRole="PaymentOnOrder" />
+  </EntityType>
+  <EntityType Name="OrderItem">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OfferID" Type="Int32" Nullable="false" />
+    <Property Name="OrderID" Type="Int32" Nullable="false" />
+    <Property Name="Quantity" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Offer" Relationship="Self.FK_OrderItems_Offer" FromRole="OrderItems" ToRole="Offer" />
+    <NavigationProperty Name="Order" Relationship="Self.FK_OrderItems_Order" FromRole="OrderItems" ToRole="Order" />
+  </EntityType>
+  <EntityType Name="PaymentMethod">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PaymentMethod1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="PaymentOnDeliveryRequests" Relationship="Self.FK_PaymentOnDeliveryRequest_PaymentMethod" FromRole="PaymentMethod" ToRole="PaymentOnDeliveryRequest" />
+    <NavigationProperty Name="PaymentOnOrders" Relationship="Self.FK_PaymentOnOrder_PaymentMethod" FromRole="PaymentMethod" ToRole="PaymentOnOrder" />
+  </EntityType>
+  <EntityType Name="PaymentOnDeliveryRequest">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PaymentMethodID" Type="Int32" Nullable="false" />
+    <Property Name="DeliveryRequestID" Type="Int32" Nullable="false" />
+    <Property Name="Amount" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+    <Property Name="PaymentDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreditCardNumber" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <Property Name="PaymentStatusID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="DeliveryRequests" Relationship="Self.FK_DeliveryRequest_PaymentOnDeliveryRequest" FromRole="PaymentOnDeliveryRequest" ToRole="DeliveryRequest" />
+    <NavigationProperty Name="PaymentMethod" Relationship="Self.FK_PaymentOnDeliveryRequest_PaymentMethod" FromRole="PaymentOnDeliveryRequest" ToRole="PaymentMethod" />
+    <NavigationProperty Name="PaymentStatu" Relationship="Self.FK_PaymentOnDeliveryRequest_PaymentStatus" FromRole="PaymentOnDeliveryRequest" ToRole="PaymentStatus" />
+  </EntityType>
+  <EntityType Name="PaymentOnOrder">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PaymentMethodID" Type="Int32" Nullable="false" />
+    <Property Name="OrderID" Type="Int32" Nullable="false" />
+    <Property Name="Amount" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+    <Property Name="PaymentDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreditCardNumber" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <Property Name="PaymentStatusID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Order" Relationship="Self.FK_PaymentOnOrder_Order" FromRole="PaymentOnOrder" ToRole="Order" />
+    <NavigationProperty Name="PaymentMethod" Relationship="Self.FK_PaymentOnOrder_PaymentMethod" FromRole="PaymentOnOrder" ToRole="PaymentMethod" />
+    <NavigationProperty Name="PaymentStatu" Relationship="Self.FK_PaymentOnOrder_PaymentStatus" FromRole="PaymentOnOrder" ToRole="PaymentStatus" />
+  </EntityType>
+  <EntityType Name="PaymentStatu">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PaymentStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="PaymentOnDeliveryRequests" Relationship="Self.FK_PaymentOnDeliveryRequest_PaymentStatus" FromRole="PaymentStatus" ToRole="PaymentOnDeliveryRequest" />
+    <NavigationProperty Name="PaymentOnOrders" Relationship="Self.FK_PaymentOnOrder_PaymentStatus" FromRole="PaymentStatus" ToRole="PaymentOnOrder" />
+  </EntityType>
+  <EntityType Name="RequestStatu">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="RequestStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="DeliveryRequests" Relationship="Self.FK_DeliveryRequest_RequestStatus" FromRole="RequestStatus" ToRole="DeliveryRequest" />
+  </EntityType>
+  <EntityType Name="Shift">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="StartTime" Type="Time" Precision="7" />
+    <Property Name="EndTime" Type="Time" Precision="7" />
+    <NavigationProperty Name="Employees" Relationship="Self.FK_Employee_Shift" FromRole="Shift" ToRole="Employee" />
+  </EntityType>
+  <EntityType Name="ShipmentType">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Weight" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+    <Property Name="PricePerKilo" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+    <NavigationProperty Name="DeliveryRequests" Relationship="Self.FK_DeliveryRequest_ShipmentType" FromRole="ShipmentType" ToRole="DeliveryRequest" />
+  </EntityType>
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_Complaint_Employee">
+    <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+    <End Role="Complaint" Type="Self.Complaint" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Employee">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Complaint">
+        <PropertyRef Name="DeliveryManID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Complaint_Employee1">
+    <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+    <End Role="Complaint" Type="Self.Complaint" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Employee">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Complaint">
+        <PropertyRef Name="SuperVisorID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Customer_CustomerType">
+    <End Role="CustomerType" Type="Self.CustomerType" Multiplicity="0..1" />
+    <End Role="Customer" Type="Self.Customer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CustomerType">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Customer">
+        <PropertyRef Name="CustomerType" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Offer_Customer">
+    <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+    <End Role="Offer" Type="Self.Offer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Offer">
+        <PropertyRef Name="ShopID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Order_Customer">
+    <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+    <End Role="Order" Type="Self.Order" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Order">
+        <PropertyRef Name="CustomerID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Holiday_Day">
+    <End Role="Day" Type="Self.Day" Multiplicity="1" />
+    <End Role="Holiday" Type="Self.Holiday" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Day">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Holiday">
+        <PropertyRef Name="DayID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DeliveryRequest_Employee">
+    <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+    <End Role="DeliveryRequest" Type="Self.DeliveryRequest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Employee">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="DeliveryRequest">
+        <PropertyRef Name="DeliveryManID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DeliveryRequest_PaymentOnDeliveryRequest">
+    <End Role="PaymentOnDeliveryRequest" Type="Self.PaymentOnDeliveryRequest" Multiplicity="1" />
+    <End Role="DeliveryRequest" Type="Self.DeliveryRequest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentOnDeliveryRequest">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="DeliveryRequest">
+        <PropertyRef Name="ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DeliveryRequest_RequestStatus">
+    <End Role="RequestStatus" Type="Self.RequestStatu" Multiplicity="1" />
+    <End Role="DeliveryRequest" Type="Self.DeliveryRequest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="RequestStatus">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="DeliveryRequest">
+        <PropertyRef Name="StatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DeliveryRequest_ShipmentType">
+    <End Role="ShipmentType" Type="Self.ShipmentType" Multiplicity="0..1" />
+    <End Role="DeliveryRequest" Type="Self.DeliveryRequest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ShipmentType">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="DeliveryRequest">
+        <PropertyRef Name="ShipmentTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Employee_EmployeeType">
+    <End Role="EmployeeType" Type="Self.EmployeeType" Multiplicity="0..1" />
+    <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EmployeeType">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Employee">
+        <PropertyRef Name="EmployeeType" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Employee_Shift">
+    <End Role="Shift" Type="Self.Shift" Multiplicity="0..1" />
+    <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shift">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Employee">
+        <PropertyRef Name="ShiftID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Holiday_Employee">
+    <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+    <End Role="Holiday" Type="Self.Holiday" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Employee">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Holiday">
+        <PropertyRef Name="EmployeeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OfferImages_Offer">
+    <End Role="Offer" Type="Self.Offer" Multiplicity="1" />
+    <End Role="OfferImages" Type="Self.OfferImage" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Offer">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="OfferImages">
+        <PropertyRef Name="OfferID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OrderItems_Offer">
+    <End Role="Offer" Type="Self.Offer" Multiplicity="1" />
+    <End Role="OrderItems" Type="Self.OrderItem" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Offer">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="OrderItems">
+        <PropertyRef Name="OfferID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OrderItems_Order">
+    <End Role="Order" Type="Self.Order" Multiplicity="1" />
+    <End Role="OrderItems" Type="Self.OrderItem" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Order">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="OrderItems">
+        <PropertyRef Name="OrderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentOnOrder_Order">
+    <End Role="Order" Type="Self.Order" Multiplicity="1" />
+    <End Role="PaymentOnOrder" Type="Self.PaymentOnOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Order">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="PaymentOnOrder">
+        <PropertyRef Name="OrderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentOnDeliveryRequest_PaymentMethod">
+    <End Role="PaymentMethod" Type="Self.PaymentMethod" Multiplicity="1" />
+    <End Role="PaymentOnDeliveryRequest" Type="Self.PaymentOnDeliveryRequest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentMethod">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="PaymentOnDeliveryRequest">
+        <PropertyRef Name="PaymentMethodID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentOnOrder_PaymentMethod">
+    <End Role="PaymentMethod" Type="Self.PaymentMethod" Multiplicity="1" />
+    <End Role="PaymentOnOrder" Type="Self.PaymentOnOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentMethod">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="PaymentOnOrder">
+        <PropertyRef Name="PaymentMethodID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentOnDeliveryRequest_PaymentStatus">
+    <End Role="PaymentStatus" Type="Self.PaymentStatu" Multiplicity="1" />
+    <End Role="PaymentOnDeliveryRequest" Type="Self.PaymentOnDeliveryRequest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentStatus">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="PaymentOnDeliveryRequest">
+        <PropertyRef Name="PaymentStatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentOnOrder_PaymentStatus">
+    <End Role="PaymentStatus" Type="Self.PaymentStatu" Multiplicity="1" />
+    <End Role="PaymentOnOrder" Type="Self.PaymentOnOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentStatus">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="PaymentOnOrder">
+        <PropertyRef Name="PaymentStatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="SmartDeliveryEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Complaints" EntityType="Self.Complaint" />
+    <EntitySet Name="Customers" EntityType="Self.Customer" />
+    <EntitySet Name="CustomerTypes" EntityType="Self.CustomerType" />
+    <EntitySet Name="Days" EntityType="Self.Day" />
+    <EntitySet Name="DeliveryRequests" EntityType="Self.DeliveryRequest" />
+    <EntitySet Name="Employees" EntityType="Self.Employee" />
+    <EntitySet Name="EmployeeTypes" EntityType="Self.EmployeeType" />
+    <EntitySet Name="Holidays" EntityType="Self.Holiday" />
+    <EntitySet Name="Offers" EntityType="Self.Offer" />
+    <EntitySet Name="OfferImages" EntityType="Self.OfferImage" />
+    <EntitySet Name="Orders" EntityType="Self.Order" />
+    <EntitySet Name="OrderItems" EntityType="Self.OrderItem" />
+    <EntitySet Name="PaymentMethods" EntityType="Self.PaymentMethod" />
+    <EntitySet Name="PaymentOnDeliveryRequests" EntityType="Self.PaymentOnDeliveryRequest" />
+    <EntitySet Name="PaymentOnOrders" EntityType="Self.PaymentOnOrder" />
+    <EntitySet Name="PaymentStatus" EntityType="Self.PaymentStatu" />
+    <EntitySet Name="RequestStatus" EntityType="Self.RequestStatu" />
+    <EntitySet Name="Shifts" EntityType="Self.Shift" />
+    <EntitySet Name="ShipmentTypes" EntityType="Self.ShipmentType" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+    <AssociationSet Name="FK_Complaint_Employee" Association="Self.FK_Complaint_Employee">
+      <End Role="Employee" EntitySet="Employees" />
+      <End Role="Complaint" EntitySet="Complaints" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Complaint_Employee1" Association="Self.FK_Complaint_Employee1">
+      <End Role="Employee" EntitySet="Employees" />
+      <End Role="Complaint" EntitySet="Complaints" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Customer_CustomerType" Association="Self.FK_Customer_CustomerType">
+      <End Role="CustomerType" EntitySet="CustomerTypes" />
+      <End Role="Customer" EntitySet="Customers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Offer_Customer" Association="Self.FK_Offer_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="Offer" EntitySet="Offers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Order_Customer" Association="Self.FK_Order_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="Order" EntitySet="Orders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Holiday_Day" Association="Self.FK_Holiday_Day">
+      <End Role="Day" EntitySet="Days" />
+      <End Role="Holiday" EntitySet="Holidays" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DeliveryRequest_Employee" Association="Self.FK_DeliveryRequest_Employee">
+      <End Role="Employee" EntitySet="Employees" />
+      <End Role="DeliveryRequest" EntitySet="DeliveryRequests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DeliveryRequest_PaymentOnDeliveryRequest" Association="Self.FK_DeliveryRequest_PaymentOnDeliveryRequest">
+      <End Role="PaymentOnDeliveryRequest" EntitySet="PaymentOnDeliveryRequests" />
+      <End Role="DeliveryRequest" EntitySet="DeliveryRequests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DeliveryRequest_RequestStatus" Association="Self.FK_DeliveryRequest_RequestStatus">
+      <End Role="RequestStatus" EntitySet="RequestStatus" />
+      <End Role="DeliveryRequest" EntitySet="DeliveryRequests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DeliveryRequest_ShipmentType" Association="Self.FK_DeliveryRequest_ShipmentType">
+      <End Role="ShipmentType" EntitySet="ShipmentTypes" />
+      <End Role="DeliveryRequest" EntitySet="DeliveryRequests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Employee_EmployeeType" Association="Self.FK_Employee_EmployeeType">
+      <End Role="EmployeeType" EntitySet="EmployeeTypes" />
+      <End Role="Employee" EntitySet="Employees" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Employee_Shift" Association="Self.FK_Employee_Shift">
+      <End Role="Shift" EntitySet="Shifts" />
+      <End Role="Employee" EntitySet="Employees" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Holiday_Employee" Association="Self.FK_Holiday_Employee">
+      <End Role="Employee" EntitySet="Employees" />
+      <End Role="Holiday" EntitySet="Holidays" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OfferImages_Offer" Association="Self.FK_OfferImages_Offer">
+      <End Role="Offer" EntitySet="Offers" />
+      <End Role="OfferImages" EntitySet="OfferImages" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OrderItems_Offer" Association="Self.FK_OrderItems_Offer">
+      <End Role="Offer" EntitySet="Offers" />
+      <End Role="OrderItems" EntitySet="OrderItems" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OrderItems_Order" Association="Self.FK_OrderItems_Order">
+      <End Role="Order" EntitySet="Orders" />
+      <End Role="OrderItems" EntitySet="OrderItems" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentOnOrder_Order" Association="Self.FK_PaymentOnOrder_Order">
+      <End Role="Order" EntitySet="Orders" />
+      <End Role="PaymentOnOrder" EntitySet="PaymentOnOrders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentOnDeliveryRequest_PaymentMethod" Association="Self.FK_PaymentOnDeliveryRequest_PaymentMethod">
+      <End Role="PaymentMethod" EntitySet="PaymentMethods" />
+      <End Role="PaymentOnDeliveryRequest" EntitySet="PaymentOnDeliveryRequests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentOnOrder_PaymentMethod" Association="Self.FK_PaymentOnOrder_PaymentMethod">
+      <End Role="PaymentMethod" EntitySet="PaymentMethods" />
+      <End Role="PaymentOnOrder" EntitySet="PaymentOnOrders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentOnDeliveryRequest_PaymentStatus" Association="Self.FK_PaymentOnDeliveryRequest_PaymentStatus">
+      <End Role="PaymentStatus" EntitySet="PaymentStatus" />
+      <End Role="PaymentOnDeliveryRequest" EntitySet="PaymentOnDeliveryRequests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentOnOrder_PaymentStatus" Association="Self.FK_PaymentOnOrder_PaymentStatus">
+      <End Role="PaymentStatus" EntitySet="PaymentStatus" />
+      <End Role="PaymentOnOrder" EntitySet="PaymentOnOrders" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

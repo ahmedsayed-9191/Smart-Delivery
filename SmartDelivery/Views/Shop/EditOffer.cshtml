@@ -1,0 +1,93 @@
+﻿@model SmartDelivery.Models.Offer
+
+@{
+    ViewBag.Title = "EditOffer";
+    Layout = "~/Views/Shared/_shopLayout.cshtml";
+}
+
+<h2 class="text-center">Edit Offer</h2>
+
+@using (Html.BeginForm("EditOffer", "Shop", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.ID)
+    @Html.HiddenFor(model => model.ShopID)
+
+
+
+    <div class="form-horizontal col-xs-12 edit-offer-form">
+
+        <div class="col-md-6 left-part edit-offer-form">
+            <div class="form-group">
+                @Html.LabelFor(model => model.OfferDescription, htmlAttributes: new { @class = "control-label col-xs-4" })
+                <div class="col-xs-8">
+                    @Html.EditorFor(model => model.OfferDescription, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.OfferDescription, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-xs-4" })
+                <div class="col-xs-8">
+                    <input class="form-control text-box single-line" data-val="true" data-val-date="The field StartDate must be a date." data-val-required="The StartDate field is required." id="StartDate" name="StartDate" type="datetime-local" value="@ViewBag.StartDate" />
+                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-xs-4" })
+                <div class="col-xs-8">
+                    <input class="form-control text-box single-line" data-val="true" data-val-date="The field EndDate must be a date." data-val-required="The EndDate field is required." id="EndDate" name="EndDate" type="datetime-local" value="@ViewBag.EndDate" />
+                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 right-part">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-xs-4" })
+                <div class="col-xs-8">
+                    @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.OfferImages, htmlAttributes: new { @class = "control-label col-xs-4" })
+                <div class="col-xs-8">
+                    <div class="custom-file form-control text-box single-line">
+
+                        <span class="file-name">Selecte Image To Upload  </span>
+                        <input class="upload-img" type="file" name="images" id="images" accept="image/*" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="col-xs-12">
+                <input type="submit" value="Update Offer" class="btn edit-offer-btn" /> <br><br />
+                <a href="@Url.Action("ListAllOffers")" class="back">
+                    <i class="fa fa-arrow-left">Back</i>
+                </a>
+            </div>
+            
+        </div>
+        
+    </div>
+    
+
+}
+
+
+
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

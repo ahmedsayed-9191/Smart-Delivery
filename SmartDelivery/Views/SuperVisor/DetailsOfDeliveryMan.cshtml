@@ -1,0 +1,160 @@
+﻿@model SmartDelivery.Models.Employee
+
+@{
+    ViewBag.Title = "Details Of DeliveryMan";
+    Layout = "~/Views/Shared/_supervisorLayout.cshtml";
+}
+
+<h2 class="text-center">DetailsOfDeliveryMan</h2>
+
+<div class="center-the-content">
+    <hr />
+
+    @*Status of DeliveryMan*@
+    @{
+        string status = "";
+        if (Model.Authorized == 1)
+        {
+            status = "Authorized";
+        }
+        else if (Model.Authorized == 0)
+        {
+            status = "Panned";
+        }
+        else if (Model.Authorized == 2)
+        {
+            status = "Need For Approval";
+        }
+        else if (Model.Authorized == 3)
+        {
+            status = "Refused";
+        }
+    }
+
+
+
+    <dl class="dl-horizontal">
+        
+            @if (Model.Photo != null)
+            {
+                var base64 = Convert.ToBase64String(Model.Photo);
+                var imgsrc = String.Format("data:image/gif;base64,{0}", base64);
+
+                <img src='@imgsrc' style="max-width:200px;max-height:200px" class="img-circle"/>
+            }
+        
+        <dt>
+            Fullname
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.Photo)
+        </dt>*@
+
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.PassWord)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PassWord)
+        </dd>*@
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Salary)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Salary)
+        </dd>
+
+        <dt>
+            Status
+        </dt>
+
+        <dd>
+            @status.ToString()
+        </dd>
+
+        <dt>
+            Holiday
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Day.DayName)
+        </dd>
+
+        <dt>
+            Shift
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Shift.StartTime)
+        </dd>
+
+    </dl>
+</div>
+<p class="text-center">
+    
+    @if (Model.Authorized == 3)
+    {
+        @Html.ActionLink("ReCreate", "ReCreateDeliveryMan", new { id = Model.ID } , new { @class = "styled_link" });
+    }
+    else
+    {
+        @Html.ActionLink(" Update", "UpdateDeliveryMan", new { id = Model.ID } , new { @class = "styled_link" });
+    }
+ 
+
+</p>
+<a href="@Url.Action("ListAllDeliveryMan")" class="back">
+    <i class="fa fa-arrow-left">Back</i>
+</a>
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

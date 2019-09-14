@@ -1,0 +1,61 @@
+﻿@model IEnumerable<SmartDelivery.Models.Complaint>
+
+@{
+    ViewBag.Title = "Complaints";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<h2>AllComplaints</h2>
+
+<table class="table">
+    <tr>
+        <th>
+           Delivery Man UserName
+        </th>
+        <th>
+            SuperVisor UserName
+        </th>
+        <th>
+           Description of the Complaint
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Employee.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Employee1.UserName)
+        </td>
+        <td>
+            @Html.TextAreaFor(modelItem => item.Description , new{@class ="" , @readonly ="readonly"})
+        </td>
+        <td>
+            @Html.ActionLink("Details", "DetailsOfTheComplaint", new { id=item.ID }, new { @class = "styled_link" })
+
+            @if (item.Employee.Authorized == 1)
+            {
+
+                using (Html.BeginForm("PanEmployee", "Admin", new { id = item.Employee.ID , complaintFlag = 1 }, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="submit" value="Pan" class="btn-link styled_link done-btn" />
+                }
+
+            }
+            else if(item.Employee.Authorized == 0)
+            {
+                using (Html.BeginForm("unPanEmployee", "Admin", new { id = item.Employee.ID, complaintFlag = 1 }, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="submit" value="Authorize" class="btn-link styled_link" />
+                }
+            }
+
+        </td>
+    </tr>
+}
+
+</table>

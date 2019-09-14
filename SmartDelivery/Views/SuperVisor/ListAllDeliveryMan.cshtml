@@ -1,0 +1,137 @@
+﻿@model IEnumerable<SmartDelivery.Models.Employee>
+
+@{
+    ViewBag.Title = "Delivery Men";
+    Layout = "~/Views/Shared/_supervisorLayout.cshtml";
+}
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Delivery Men</title>
+    @*<link rel="stylesheet" href="~/Content/SystemActors_Styles.css"/>*@
+</head>
+<h2 class="text-center">Delivery Men</h2>
+
+<p>
+    @Html.ActionLink("New DeliveryMan", "AddDeliveryMan" )
+</p>
+
+
+@foreach (var item in Model)
+{
+    <div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1 purchase-card">
+        <div class="col-xs-6 col-xs-offset-3 request-description">
+            @Html.DisplayFor(modelItem => item.FirstName)
+            @Html.DisplayFor(modelItem => item.LastName)
+        </div>
+        <div class="col-xs-10 col-xs-offset-1 purchase-details">
+            <div class="col-xs-12">
+                <label class="col-xs-6">@Html.DisplayNameFor(model => model.Email)</label>
+                <span class="col-xs-6">@Html.DisplayFor(modelItem => item.Email)</span>
+            </div>
+            <div class="col-xs-12">
+                <label class="col-xs-6">@Html.DisplayNameFor(model => model.Phone)</label>
+                <span class="col-xs-6">@Html.DisplayFor(modelItem => item.Phone)</span>
+            </div>
+
+        </div>
+        <div class="col-xs-12 delivery-request-control">
+            @Html.ActionLink("Details", "DetailsOfDeliveryMan", new { id = item.ID }, new { @class = "styled_link" })
+
+            @if (item.Authorized == 1)
+            {
+                @Html.ActionLink("Edit", "UpdateDeliveryMan", new { id = item.ID }, new { @class = "styled_link" })
+                @Html.ActionLink("Complaint", "ComplaintToAdmin", new { id = item.ID }, new { @class = "styled_link" })
+                <a class="tip" href="@Url.Action("Chat", new { id=item.ID, usertype=3 })" target="_blank">
+                    <i class="fa fa-envelope fa-2x"></i>
+                    <span class="tooltiptext">Chat with Delivery Man</span>
+                </a>
+            }
+        </div>
+    </div>}
+
+@*<table class="table">
+    <tr>
+        <th>
+            Name
+        </th>
+ 
+        <th class="to_be_hidden_firstly">
+           
+        </th>
+        <th class="to_be_hidden_secondly">
+            
+        </th>
+        <th>
+            
+        </th>
+        <th>
+            
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Salary)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Authorized)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Active)
+        </th>
+        <th>
+            Holiday
+        </th>
+        <th>
+            Shift
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+           
+        </td>
+
+        <td class="to_be_hidden_firstly">
+            
+        </td>
+        <td class="to_be_hidden_secondly">
+           
+        </td>
+        @*<td>
+        
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.UserName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Salary)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Authorized)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Active)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Day.DayName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Shift.StartTime)
+    </td>
+        <td>
+           
+        </td>
+    </tr>
+}
+
+</table>*@
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

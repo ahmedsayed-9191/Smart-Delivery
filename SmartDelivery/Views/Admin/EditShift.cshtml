@@ -1,0 +1,44 @@
+﻿@model SmartDelivery.Models.Shift
+
+@{
+    ViewBag.Title = "Edit Shift";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal col-md-5">
+        <h3 class="text-center">Edit Shift</h3>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartTime, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input class="form-control text-box single-line" id="StartTime" name="StartTime" type="time" value="@Model.StartTime" />
+                @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EndTime, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input class="form-control text-box single-line" id="EndTime" name="EndTime" type="time" value="@Model.EndTime" />
+                @Html.ValidationMessageFor(model => model.EndTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Edit" class="btn" />
+            </div>
+        </div>
+    </div>
+}
+
+<a href="@Url.Action("ListAllShifts")" class="back">
+    <i class="fa fa-arrow-left">Back</i>
+</a>

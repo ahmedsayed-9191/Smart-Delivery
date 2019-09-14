@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="21e13a66f5bf451a8cdbc2ad26327c19" Name="Diagram1">
+        <EntityTypeShape EntityType="SmartDeliveryModel.Complaint" Width="1.5" PointX="8.25" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.Customer" Width="1.5" PointX="3" PointY="9.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.Day" Width="1.5" PointX="3.75" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.DeliveryRequest" Width="1.5" PointX="11.25" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.Employee" Width="1.5" PointX="6" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.Message" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.Offer" Width="1.5" PointX="5.25" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.OfferImage" Width="1.5" PointX="7.5" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.Order" Width="1.5" PointX="10.5" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.OrderStatu" Width="1.5" PointX="8.25" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.PaymentStatu" Width="1.5" PointX="9" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.Rate" Width="1.5" PointX="8.25" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.RequestStatu" Width="1.5" PointX="9" PointY="16.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.Shift" Width="1.5" PointX="3.75" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.ShipmentType" Width="1.5" PointX="9" PointY="18.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.sysdiagram" Width="1.5" PointX="0.75" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartDeliveryModel.UserType" Width="1.5" PointX="0.75" PointY="10.25" IsExpanded="true" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Complaint_Employee" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Complaint_Employee1" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Customer_EmployeeType" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Offer_Customer" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Order_Customer" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Employee_Day" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_DeliveryRequest_Employee" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_DeliveryRequest_Employee1" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_DeliveryRequest_PaymentStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_DeliveryRequest_RequestStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_DeliveryRequest_ShipmentType" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Employee_EmployeeType" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Employee_Shift" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Rate_Employee" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_OfferImages_Offer" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Order_Offer" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Order_OrderStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartDeliveryModel.FK_Order_PaymentStatus" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

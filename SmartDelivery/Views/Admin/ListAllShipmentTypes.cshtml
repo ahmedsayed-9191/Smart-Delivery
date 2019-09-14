@@ -1,0 +1,45 @@
+﻿@model IEnumerable<SmartDelivery.Models.ShipmentType>
+@*Last Update 18 jan 3:48 am*@
+@{
+    ViewBag.Title = "Shipment Types";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<h2 class="text-center">All Shipment Types</h2>
+
+<p>
+    @Html.ActionLink("Add Shipment Type", "AddShipmentType")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Weight)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PricePerKilo)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Type)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Weight)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PricePerKilo)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "EditShipmentType", new { shipmentTypeId = item.ID }, new { @class = "styled_link" }) 
+            @Html.ActionLink("Delete", "DeleteShipmentType", new { shipmentTypeId = item.ID }, new { @class = "styled_link" })
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,72 @@
+﻿
+@model SmartDelivery.Models.Customer
+
+@{
+    ViewBag.Title = "My Profile";
+    Layout = "~/Views/Shared/_normalcustomerLayout.cshtml";
+}
+<style>
+    p{
+        margin-bottom:25px;
+    }
+</style>
+
+@*<h2 class="text-center">My Profile</h2>*@
+<div class="col-xs-12 profile-section">
+    <div class="col-xs-6 image-and-contol">
+        <div class="col-xs-12">
+            <div>
+                @if (Model.Photo != null)
+            {
+                var base64 = Convert.ToBase64String(Model.Photo);
+                var imgsrc = String.Format("data:image/gif;base64,{0}", base64);
+                    <img src='@imgsrc' style="max-width:300px;max-height:300px" class="img-thumbnails" />
+                }
+            </div>
+        </div>
+        <div class="col-xs-12 profile-control">
+            <p class="text-center">
+                @Html.ActionLink("Update Profile", "UpdateProfile", new { id = Model.ID }, new { @class = "styled_link" })
+                @*@Html.ActionLink("Back", "Index", new { @class = "styled_link" })*@
+            </p>
+            <p class="text-center">
+                @Html.ActionLink("Delete Account", "DeleteAccount", new { id = Model.ID }, new { @class = "styled_link" })
+                @*@Html.ActionLink("Back", "Index", new { @class = "styled_link" })*@
+            </p>
+        </div>
+    </div>
+
+    <div class="col-xs-6 profile-info">
+
+        <label>Fullname</label>
+        @Html.DisplayFor(model => model.FirstName)
+        @Html.DisplayFor(model => model.LastName)
+        <br />
+        <label>@Html.DisplayNameFor(model => model.Email)</label>
+        @Html.DisplayFor(model => model.Email)
+        <br />
+
+        <label>@Html.DisplayNameFor(model => model.Phone)</label>
+        @Html.DisplayFor(model => model.Phone)
+        <br />
+        <label>@Html.DisplayNameFor(model => model.Address)</label>
+        @Html.DisplayFor(model => model.Address)
+        <br />
+        <label>Username</label>
+        @Html.DisplayFor(model => model.UserName)
+
+    </div>
+
+</div>
+
+
+
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

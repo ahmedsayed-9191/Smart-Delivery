@@ -1,0 +1,144 @@
+﻿/***********************************/
+/*** start navbar ***/
+.navbar {
+    font-weight:bold;
+}
+
+.navbar-default {
+    background: none;
+    border: none;
+    font-size: 16px;
+}
+
+/*.navbar-header img{
+    width: 240px;
+    height: 100px;
+}*/
+/*.navbar-default {
+    border-color: #e7e7e7;
+    background: #f1a60fba;
+}*/
+@media (min-width: 768px){
+.navbar-right {
+    float: right!important;
+    margin-right: -15px;
+    margin-top:1%;
+}}
+
+ .navbar-default .navbar-nav > li > a {
+        color: #D6DDE5;
+        transition:all .4s ease-in-out; 
+    }
+
+.navbar-default .navbar-nav > li > a:hover {
+    color: #5B95DE;
+}
+.navbar-default .navbar-nav > li > a:focus {
+    outline:none;
+    color:#5B95DE;
+}
+
+/*.navbar-default .navbar-brand {
+    color: #5B95DE;
+    font-size: 25px;
+    letter-spacing: 2.1px;
+    transition: all .3s ease-in-out;
+}*/
+
+
+
+
+@media (min-width: 1200px) {
+    .container {
+        width: 1170px;
+    }
+}
+
+@media (max-width:1000px ) {
+    .navbar-default .navbar-brand {
+        font-size: 20px;
+    }
+}
+@media (min-width: 768px) {
+    .navbar-nav > li > a {
+        padding-top: 15px;
+        padding-bottom: 0;
+    }
+}
+
+.navbar-nav>li>a {
+    padding-top: 10px;
+    padding-bottom: 0; 
+    line-height: 20px;
+}
+/******************************************************/
+/*** start login popup ***/
+.modal-content {
+    background:rgba(91, 149, 222, 0.85);
+}
+
+.modal-footer .btn+.btn {
+    margin-bottom: 0;
+    margin-left: 5px;
+    outline: none;
+    color:#286090;
+    font-weight:bold;
+}
+.modal-footer input{
+    color:#286090;
+    font-weight:bold;
+}
+.modal-footer input:hover {
+    color:#286090;
+}
+.modal-footer .btn-default:focus {
+    color: #fff;
+    background-color: #286090;
+    border-color: #204d74;
+    outline:none;
+}
+.modal-title {
+    margin: 0;
+    line-height: 1.42857143;
+    text-align: center;
+}
+.modal-footer {
+    padding: 15px;
+    border-top: 1px solid #e5e5e5;
+}
+@media(max-width:771px) {
+    .modal.in .modal-dialog {
+        -webkit-transform: translate(0,0);
+        -ms-transform: translate(0,0);
+        -o-transform: translate(0,0);
+        transform: translate(0,0);
+        margin-top: 150px;
+    }
+}
+@media (min-width: 768px) {
+    .modal-dialog {
+        width: 400px;
+        margin: 75px auto;
+    }
+}
+/******************************************************/
+/*** start contact ***/
+ .contact .form-control {
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid #1c1d21;
+    box-shadow: none;
+    width: 80%;
+    margin: 0 auto 30px;
+    background-color: #1c1d21;
+    border-radius: 5px;
+    opacity:.7;
+}
+.contact button:focus {
+    outline:none;
+}
+
+.form-horizontal .form-group {
+    margin-right: 0; 
+    margin-left: 0;
+}

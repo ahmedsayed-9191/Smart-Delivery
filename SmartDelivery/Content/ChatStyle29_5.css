@@ -1,0 +1,142 @@
+.chat-header {
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 1px solid #EEE;
+}
+
+.chat-box {
+    width: 50%;
+    margin: auto;
+    float: none;
+}
+
+/*** styling the scroll ***/
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #5B95DE;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+/*** end ***/
+
+
+.chat-control {
+    padding: 10px;
+    margin-top: 10px;
+    border-top: 2px solid #EEE;
+}
+
+    .chat-control input {
+        padding: 5px;
+        width: 70%;
+        outline: none;
+        border: none;
+        font-size: 15px;
+    }
+
+    .chat-control button {
+        float: right;
+        background: none;
+        border: none;
+        font-weight: 700;
+        color: #5B95DE;
+        outline: none;
+        padding: 5px;
+        margin: 0;
+    }
+
+/* Ahmed Sayed added*/
+
+.messeges {
+    overflow-x: scroll;
+    overflow-x: hidden;
+}
+
+    .messeges ul li {
+        list-style: none;
+        clear: both;
+        font-size: 15px;
+    }
+    
+
+    .messeges .send-msg {
+        position: relative;
+        float: right;
+        padding: 10px;
+        margin: 2px;
+        border-radius: 5px;
+        font-weight: bold;
+        max-width: 450px;
+        word-wrap: break-word;
+    }
+
+        .messeges .send-msg i {
+            position: absolute;
+            right: -14px;
+            color: #4e779c;
+            bottom: 4px;
+            font-size: 13px;
+        }
+
+    .messeges .receive-msg {
+        padding: 10px;
+        display: inline-block;
+        background: #f1f0f0;
+        max-width: 450px;
+        margin: 2px;
+        border-radius: 5px;
+        font-weight: bold;
+        word-wrap: break-word;
+    }
+    @media(max-width:989px) {
+    .chat-box {
+        width:80%;
+    }
+    .messeges .send-msg ,.messeges .receive-msg {
+         padding: 5px;
+    }
+        .messeges ul li {
+        font-size: 12px;
+    }
+
+}
+
+/*.messeges ul li.Sent-Successfully {
+        float: right;
+        color: rgba(0, 0, 0, .40);
+        font-size: 10px;
+    }*/
+
+
+.tooltip-inner {
+    width: 70px; 
+}
+
+.status-of-the-user {
+    width: 8px;
+    height: 8px;
+    /*background: red;*/
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
+ /*span{
+    text-align: center;
+    display: block;
+    color: green;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 9px;
+    background: red;
+}*/

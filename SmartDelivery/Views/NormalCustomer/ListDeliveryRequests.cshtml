@@ -1,0 +1,394 @@
+﻿@model IEnumerable<SmartDelivery.Models.DeliveryRequest>
+
+@{
+    ViewBag.Title = "ListDeliveryRequests";
+    Layout = "~/Views/Shared/_normalcustomerLayout.cshtml";
+}
+
+<h2 class="text-center">List delivery requests</h2>
+
+<p>
+    @Html.ActionLink("Make a new Delivery request", "RequestDelivery")
+</p>
+@foreach (var item in Model)
+{
+<div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1 request-card" id="@item.ID">
+    <div class="col-xs-6 col-xs-offset-3 request-description">
+        @Html.DisplayFor(modelItem => item.ShipmentDescription)
+    </div>
+    <div class="col-xs-10 col-xs-offset-1 request-details">
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.Cost)</label>
+            <span class="col-xs-6">@Html.DisplayFor(modelItem => item.Cost)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.RecievingCode)</label>
+            <span class="col-xs-6">@Html.DisplayFor(modelItem => item.RecievingCode)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.RequestStatu.RequestStatus)</label>
+            <span class="col-xs-6">@Html.DisplayFor(modelItem => item.RequestStatu.RequestStatus)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">DeliveryMan</label>
+            <span class="col-xs-6">@Html.DisplayFor(modelItem => item.Employee.UserName)</span>
+        </div>
+    </div>
+
+    <div class="col-xs-12 request-control">
+        @if (item.StatusID == 2)
+        {
+            <a class="styled_link" data-toggle="modal" data-target="#exampleModalCenter" onclick="setMap(this)" data-assigned-id="@item.ID">Track Shipment</a>
+            <a class="tip" href="@Url.Action("Chat", new { id=item.DeliveryManID, usertype=3 })" target="_blank">
+                <i class="fa fa-envelope fa-2x"></i>
+                <span class="tooltiptext">Chat with Delivery Man</span>
+            </a>
+                <a class="tip" href="@Url.Action("Chat", new { id=item.SupervisorID, usertype=2 })" target="_blank">
+                    <i class="fa fa-envelope fa-2x"></i>
+                    <span class="tooltiptext">Chat with Supervisor</span>
+                </a>
+        }
+        else if (item.StatusID == 3)
+        {
+
+
+            using (Html.BeginForm("removeRequest", "NormalCustomer", new { id = item.ID }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="submit" value="Remove" class="btn-link styled_link" />
+            }
+
+        }
+        @if (item.StatusID != 3)
+                {
+            @Html.ActionLink("Update", "UpdateRequest", new { id = item.ID }, new { @class = "styled_link" })
+            @Html.ActionLink("Cancel", "CancelRequest", new { id = item.ID }, new { @class = "styled_link" })
+
+
+        }
+        @if (item.Rated == null && item.StatusID == 3)
+        {
+            <div id="ratingDiv">
+                <label class="control-label col-md-4">Rate us: </label>
+                <div class="col-md-8">
+                    <select class="form-control" id="_rate">
+                        <option value="1">1</option>
+
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <input type="checkbox" id="checkRate" value="confirm rating" onclick="rate('@item.ID','@item.DeliveryManID')"> confirm Rating.
+
+                </div>
+            </div>
+
+        }
+
+        @*<input type="button" value="Track Shipment" onclick="setMap(this)" data-assigned-id="@item.ID" class="btn" />*@
+
+
+    </div>
+</div>}
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" id="exampleModalLongTitle">Track Shipment</h5>
+            </div>
+            <div class="modal-body">
+                <div id="popupWindow" style="display:none">
+                    <div id="tracked_map" style="display:none; height:300px; width:350px ; margin:0 auto"></div>
+                    <br><br>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Current Location</label>
+                        <div class="col-md-5">
+                            <input id="_currentLocation" , class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Expected Delivery Time</label>
+                        <div class="col-md-5">
+                            <input type="text" id="__deliveryTime" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Remaining Distance</label>
+                        <div class="col-md-5">
+                            <input type="text" id="_calculatedDistance" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                @*<button type="button" class="">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+    var current_location = "";
+    var request_id = 0;
+    var source = "";
+    var destination = "";
+    function setMap(elem) {
+        request_id = $(elem).data('assigned-id');
+        sessionStorage.setItem("request_id", request_id);
+        var R_ID = { id: request_id }
+        console.log("request_id => " + R_ID.id);
+        $.ajax({
+
+            type: "GET",
+            url: "/../NormalCustomer/getjourneyInfo",
+            data: R_ID,
+            success: function (response) {
+               // current_location = response.journy.current_loc;
+                //source = response.journy.source;
+                //destination = response.journy.destination;
+                sessionStorage.setItem("current_location", response.journy.current_loc);
+                sessionStorage.setItem("source", response.journy.source);
+                sessionStorage.setItem("destination", response.journy.destination);
+                //console.log("current_location : " + sessionStorage.getItem("current_location") + " sessionStorage.length : " + sessionStorage.length);
+                //console.log("current_location : " + current_location + " source : " + source + " destination: " + destination);
+            }
+
+        })
+        setTimeout(function () {
+            if (sessionStorage.length > 1) {
+                current_location = sessionStorage.getItem("current_location");
+                source = sessionStorage.getItem("source");
+                destination = sessionStorage.getItem("destination");
+                document.getElementById("tracked_map").style.display = "block";
+                document.getElementById("popupWindow").style.display = "block";
+                initMap();
+            }
+        }, 2000);
+       // console.log("current_location : " + current_location + " source : " + source + " destination: " + destination);
+
+
+    }
+
+    function initMap() {
+        var service = new google.maps.DistanceMatrixService();
+        var infoWindow = new google.maps.InfoWindow;
+        var geocoder = new google.maps.Geocoder;
+
+        var marker = "";
+        var map = new google.maps.Map(document.getElementById('tracked_map'), {
+
+            zoom: 16,
+            mapTypeId: 'roadmap'
+        });
+        if (sessionStorage.length > 2)
+        {
+            //console.log("From INITMAP => current_location : " + current_location + " source : " + source + " destination: " + destination);
+            var service = new google.maps.DistanceMatrixService();
+            var directionsService = new google.maps.DirectionsService();
+            var directionsDisplay = new google.maps.DirectionsRenderer();
+            var latlngStr1 = source.split(',');
+            var latlngStr2 = destination.split(',');
+            var current_latlngStr = current_location.split(',');
+            var latlng1 = { lat: parseFloat(latlngStr1[0]), lng: parseFloat(latlngStr1[1]) };
+            var latlng2 = { lat: parseFloat(latlngStr2[0]), lng: parseFloat(latlngStr2[1]) };
+            var current_latlng = { lat: parseFloat(current_latlngStr[0]), lng: parseFloat(current_latlngStr[1]) };
+           // var current_latlng = new google.maps.LatLng(parseFloat(current_latlngStr[0]), parseFloat(current_latlngStr[1]));
+
+          //  map.panTo(current_latlng);
+           // map.setZoom(20);
+            map.setCenter(current_latlng);
+
+
+            directionsDisplay.setMap(map);
+            var request = {
+                origin: latlng1,
+                destination: latlng2,
+                travelMode: google.maps.TravelMode.DRIVING
+
+            };
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                }
+            });
+            marker = new google.maps.Marker({
+                position: current_latlng,
+                map: map,
+                animation: google.maps.Animation.BOUNCE,
+                icon: "/../delivery.png"
+
+            });
+            // service to get the remaining time & distance to the destination
+            service.getDistanceMatrix({
+                origins: [current_latlng],
+                destinations: [latlng2],
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC,
+                avoidHighways: false,
+                avoidTolls: false
+            }, function (response, status) {
+                if (status == google.maps.DistanceMatrixStatus.OK &&
+                              response.rows[0].elements[0].status != "ZERO_RESULTS") {
+                    var distance = response.rows[0].elements[0].distance.value;
+                    distance = distance / 1000;
+                    var duration = response.rows[0].elements[0].duration.value;
+                    duration = parseFloat(duration / 60).toFixed(2);
+
+                    document.getElementById("_calculatedDistance").value = distance + " km";
+                    document.getElementById("__deliveryTime").value = duration + " minutes";
+
+                }
+            });
+            // geocoder to get the name of current location
+            geocoder.geocode({ 'location': current_latlng }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+
+                        document.getElementById("_currentLocation").value = results[0].formatted_address;
+
+                    } else {
+                        console.log('No results found');
+                    }
+                } else {
+                    console.log('Geocoder failed due to: ' + status);
+                }
+            });
+
+            setInterval(function () { success(map, marker, service, geocoder, latlng2); }, 60000);
+           // map.setCenter(latlng2);
+        } else
+        {
+
+        }
+
+    }
+
+
+    function success(map, marker,service, geocoder, destination) {
+
+        var RID = parseInt(sessionStorage.getItem("request_id"));
+        var R_ID = { id: RID }
+        //console.log("=> "+R_ID.id);
+        $.ajax({
+
+            type: "GET",
+            url: "/../NormalCustomer/getCurrentLocation",
+            data: R_ID,
+            success: function (response) {
+
+                sessionStorage.setItem("new_current_location", response.employee.c_location);
+                //alert("you are done : " + response.employee.c_location);
+            }
+
+        })
+        if (sessionStorage.getItem("new_current_location") === null)
+            {}
+        else{
+            current_location = sessionStorage.getItem("new_current_location");
+         //   console.log("current_location : " + current_location + " new_current_location : " + sessionStorage.getItem("new_current_location"));
+            var current_latlngStr = current_location.split(',');
+            var current_latlng = { lat: parseFloat(current_latlngStr[0]), lng: parseFloat(current_latlngStr[1]) };
+           // var current_latlng = new google.maps.LatLng(parseFloat(current_latlngStr[0]), parseFloat(current_latlngStr[1]));
+
+            marker.setPosition(current_latlng);
+             map.setCenter(current_latlng);
+
+         //   map.panTo(current_latlng);
+            // service to get the remaining time & distance to the destination
+            service.getDistanceMatrix({
+                origins: [current_latlng],
+                destinations: [destination],
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC,
+                avoidHighways: false,
+                avoidTolls: false
+            }, function (response, status) {
+                if (status == google.maps.DistanceMatrixStatus.OK &&
+                              response.rows[0].elements[0].status != "ZERO_RESULTS") {
+                    var distance = response.rows[0].elements[0].distance.value;
+                    distance = distance / 1000;
+                    var duration = response.rows[0].elements[0].duration.value;
+                    duration = parseFloat(duration / 60).toFixed(2);
+
+                    document.getElementById("_calculatedDistance").value = distance + " km";
+                    document.getElementById("__deliveryTime").value = duration + " minutes";
+
+                }
+            });
+            // geocoder to get the name of current location
+            geocoder.geocode({ 'location': current_latlng }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+
+                        document.getElementById("_currentLocation").value = results[0].formatted_address;
+
+                    } else {
+                        console.log('No results found');
+                    }
+                } else {
+                    console.log('Geocoder failed due to: ' + status);
+                }
+            });
+
+
+        }
+
+    }
+
+   // setInterval(function () { success(d); }, 20000);
+    /*
+       1-key1  AIzaSyARZj829jcIqy8ik7UKOwIT_CynjqIe4e0
+       2-key2  AIzaSyDohzVGcA6LnOTCA9doBW0fR8oWMVwxHAE
+
+       */
+
+    function rate(rid,dm_ID)
+    {
+
+        var rate = document.getElementById("_rate").value;
+        var R_ID = { reqID: parseInt(rid), empID: parseInt(dm_ID), empRate: parseInt(rate) }
+        $.ajax({
+
+            type: "POST",
+            url: "/../NormalCustomer/rateRequest",
+            data: R_ID,
+            success: function (response) {
+                var rowID = "#" + rid;
+                alert("Request Rated Successfully.");
+                $(rowID).remove();
+            }
+
+        })
+    }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDohzVGcA6LnOTCA9doBW0fR8oWMVwxHAE&libraries=places&callback=initMap"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

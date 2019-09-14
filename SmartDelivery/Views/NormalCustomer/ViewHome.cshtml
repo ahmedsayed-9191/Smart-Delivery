@@ -1,0 +1,137 @@
+﻿
+@model IEnumerable<SmartDelivery.Models.Offer>
+
+@{
+    ViewBag.Title = "My Offers";
+    Layout = "~/Views/Shared/_normalcustomerLayout.cshtml";
+}
+
+<script src="~/Scripts/jquery-3.2.1.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+
+
+@*<h2>All Offers</h2>*@
+
+<style>
+    /*body {
+        background: #f0f0f094;
+    }*/
+
+    .price {
+        color: #26070778 !important;
+        font-size: 15px;
+    }
+</style>
+
+
+
+@foreach (var item in Model)
+{
+    <div class="col-sm-12 offer-block">
+
+        <div class="col-xs-2 image-section">
+            @*@Html.DisplayNameFor(model => model.OfferImages)*@
+            <div>
+                @foreach (var image in item.OfferImages)
+                {
+                    var base64 = Convert.ToBase64String(image.Image);
+                    var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+                    <img src='@imgsrc' style="max-width:150px;max-height:150px" class="img-thumbnail" />
+                    break;
+                }
+            </div>
+        </div>
+
+        <div class="col-sm-8 details-section ">
+            <div class="col-xs-12 details-header text-center">
+                <p class="header-title">
+                    @Html.DisplayFor(modelItem => item.OfferDescription)
+                </p>
+                <span class="price">@Html.DisplayNameFor(model => model.Price)</span>
+                <span class="price">@Html.DisplayFor(modelItem => item.Price)</span>
+            </div>
+
+            <span>@Html.DisplayNameFor(model => model.Customer.ShopName)</span>
+            @Html.DisplayFor(modelItem => item.Customer.ShopName)
+
+            @*<span>@Html.DisplayNameFor(model => model.OfferDescription)</span>
+                @Html.DisplayFor(modelItem => item.OfferDescription)*@
+
+            @*@Html.DisplayNameFor(model => model.StartDate)
+                @Html.DisplayFor(modelItem => item.StartDate)*@
+
+            @{  string Date = item.EndDate.ToString("dd/MM/yyyy");}
+            <span>@Html.DisplayNameFor(model => model.EndDate)</span>
+            @Html.DisplayFor(modelItem => Date)
+
+
+        </div>
+
+        <div class="col-xs-2 order-btn-section">
+            @Html.ActionLink("Order", "OrderOffer", new { id = item.ID }, new { @class = "styled_link" })
+        </div>
+
+    </div>
+                }
+
+
+
+
+
+@*<script>
+
+        $(".offer-block .image-section img").click(function () {
+        console.log("img clicked");
+    });
+    </script>*@
+
+
+
+
+
+
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}
+
+
+@*<!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+        Order
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                @using (Ajax.BeginForm("OrderOffer", "NormalCustomer", new { offerID = @offer_Id }, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "msseageSuccess" }))
+                {
+                    <div class="modal-body">
+                        Enter the quantity you need :
+                        <input id="orderQuantity" name="orderQuantity" type="number" min="1" max="100" value="1" />
+                    </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <input type="submit" class="btn btn-primary" value="Submit order" />
+
+                                </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div id="msseageSuccess">
+
+    </div>*@

@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<!--*** start home title  ***-->
+<div class="home-body-title ">
+
+    <p id="para"></p> <!--** type writer effect **-->
+</div>
+<button class="button" data-toggle="modal" data-target="#loginModal">Request Service</button>
+
+<!--*** end home title  ***-->
+<script>
+    /*************************************/
+    /*** type writer effect ***/
+    var text = "Deliver .. Track By Smart Way .";
+    var i = 0;
+    var p = document.getElementById("para");
+
+    var typewriter = setInterval(function () {
+        p.textContent += text[i];
+        i = i + 1;
+        if (i > text.length - 1) {
+            clearInterval(typewriter);
+        }
+    }, 200);
+</script>
+

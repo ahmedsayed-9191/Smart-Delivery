@@ -1,0 +1,88 @@
+﻿@model IEnumerable<SmartDelivery.Models.Message>
+
+@{
+    ViewBag.Title = "Chat";
+    Layout = "~/Views/Shared/_normalcustomerLayout.cshtml";
+}
+@*<h2>NormalCustomerChattingBox</h2>*@
+<html>
+<head>
+    <link rel="stylesheet" href="~/Content/ChatStyle29_5.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="chat-header col-md-12 text-center">@ViewBag.DeliveryMan_FullNAme</div>
+
+            <div class="chat-box col-md-12" id="msgss">
+                <div class="col-md-12 messeges" id="chat-box-content">
+                    <ul id="ulmessages">
+                        @foreach (var item in Model)
+                        {
+                            int MyID = int.Parse(Session["id"].ToString());
+                            if (item.SenderID == MyID)
+                            {
+                                <li class="bg-primary send-msg" id="sent_message"
+                                   @{  string Time = item.Sent_DateTime.ToString("h:mmtt");}
+                                 title=@Html.DisplayFor(modelItem => Time)>
+                                    @Html.DisplayFor(modelItem => item.MessageContent)
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <div class="receive-msg" data-toggle="tooltip" data-placement="top" title=@Html.DisplayFor(modelItem => item.Sent_DateTime)>
+                                        <!--<img src="demo/image1.jpg">-->
+                                        <div>
+                                            <p>@Html.DisplayFor(modelItem => item.MessageContent)</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+                <div class="chat-control col-md-12">
+                    <input type="text" placeholder="Type a message..." id="textmeesage">
+                    <button onclick="onSend()" id="btnSend">Send</button>
+                </div>
+                    <input type="hidden" value="@ViewBag.Receiver_UserName_onController" id="receiver_UserName_onHtml" />
+                    <input type="hidden" value="@ViewBag.Receiver_ID" id="receiver_id_onHtml" />
+                </div>
+        </div>
+    </div>
+</body>
+</html>
+@*@section Chat_info{
+        @Html.Action("More Information", "ChatInfo", new { id = @ViewBag.Receiver_ID })
+    }*@
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript"> var MyID = '@Session["id"]';</script>
+    <script type="text/javascript" src="~/Scripts/ChatBox.js"></script>
+}
+<script>
+    /*************************************/
+    /*** when click enter send the message && clear chat box after sending the messege***/
+    var input = document.getElementById("textmeesage");
+    var send_btn = document.getElementById("btnSend");
+    var chatbox = document.getElementById("chat-box-content");
+
+    input.addEventListener("keyup", function (event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            send_btn.click();
+            $(input).val("");
+        }
+    });
+
+    //get the bottom of the chat when send the message
+    var chatbox = document.getElementById("chat-box-content");
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+</script>

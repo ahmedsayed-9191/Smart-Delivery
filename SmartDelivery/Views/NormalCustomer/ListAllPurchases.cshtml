@@ -1,0 +1,190 @@
+﻿@model IEnumerable<SmartDelivery.Models.Order>
+@using System.Configuration
+@{
+    ViewBag.Title = "List All Purchases";
+    Layout = "~/Views/Shared/_normalcustomerLayout.cshtml";
+}
+
+@*<h2 class="text-center">All Purchases</h2>*@
+
+@foreach (var item in Model)
+{
+<div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1 purchase-card">
+    <div class="col-xs-6 col-xs-offset-3 purchase-image">
+        @foreach (var image in item.Offer.OfferImages)
+        {
+            var base64 = Convert.ToBase64String(image.Image);
+            var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+        <img src='@imgsrc' style="max-width:100px;max-height:100px" class="img-thumbnail" />
+            break;
+        }
+    </div>
+    <div class="col-xs-10 col-xs-offset-1 purchase-details">
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.Offer.Customer.ShopName)</label>
+            <span class="col-xs-6"> @Html.DisplayFor(modelItem => item.Offer.Customer.ShopName)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.Offer.OfferDescription)</label>
+            <span class="col-xs-6"> @Html.DisplayFor(modelItem => item.Offer.OfferDescription)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.Quantity)</label>
+            <span class="col-xs-6"> @Html.DisplayFor(modelItem => item.Quantity)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.TotalPrice)</label>
+            <span class="col-xs-6">  @Html.DisplayFor(modelItem => item.TotalPrice)</span>
+        </div>
+        <div class="col-xs-12">
+            <label class="col-xs-6">@Html.DisplayNameFor(model => model.OrderStatu.Status)</label>
+            <span class="col-xs-6">   @Html.DisplayFor(modelItem => item.OrderStatu.Status)</span>
+        </div>
+</div>    
+    <div class="col-xs-12 purchase-control">
+        
+            @*If status is pending Can Edit or Cancel*@
+            @if (item.StatusId == 1 || item.StatusId == 3)
+            {
+            @Html.ActionLink("Edit", "EditOrder", new { id = item.ID }, new { @class = "styled_link" });
+            @Html.ActionLink("Cancel", "CancelOrder", new { id = item.ID }, new { @class = "styled_link" });
+            }
+            @*If status is Accepted*@
+            @if (item.StatusId == 2)
+            {
+                    <!-- hidden form for paypal -->
+
+            <form action="@ConfigurationManager.AppSettings["urlSubmitPayment"]" target="_blank">
+                <input type="hidden" name="cmd" value="_cart" />
+                <input type="hidden" name="upload" value="1" />
+                <input type="hidden" name="return" value="@ConfigurationManager.AppSettings["urlReturnForOrderBayment"]" />
+                <input type="hidden" name="business" value="@ConfigurationManager.AppSettings["accountBusiness"]" />
+
+                <input type="hidden" id="Description" name="@Url.Content("item_name_1")" value="@item.Offer.OfferDescription" />
+                <input type="hidden" id="RecievingCode" name="@Url.Content("item_number_1")" value="@item.ID" />
+                <input type="hidden" id="Distance" name="@Url.Content("amount_1")" value="@item.Offer.Price" />
+                <input type="hidden" id="costPerKM" name="@Url.Content("quantity_1")" value="@item.Quantity" />
+
+                @if (item.Paid == 1 || item.Paid == null)
+                {
+                    var bid = item.OrderStatu.Status + item.ID;
+                    <div class="col-md-12" style="align-content:center">
+                        <input type="submit" id="@{@bid}" value="Pay With PayPal"
+                               onclick="confirmPaymentInfo(this.id,@item.ID)"
+                               class="btn-link styled_link" />
+                    </div>
+    }
+    else if (item.Paid == 2)
+    {
+            <div class="col-md-12" style="align-content:center">
+                <input type="submit" id="buttonPay" value="Paid" disabled="disabled" class="btn-link styled_link" />
+            </div>
+    }
+            </form>
+    }
+    </div>
+</div>}
+
+@*<table class="table">
+    <tr>
+        <th class="to_be_hidden_firstly">
+            
+        </th>
+        <th>
+            
+        </th>
+        <th class="to_be_hidden_firstly">
+
+        </th>
+        <th>
+            
+        </th>
+        <th>
+            
+        </th>
+        <th class="to_be_hidden_secondly">
+            
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="to_be_hidden_firstly">
+                
+            </td>
+            <td>
+                
+            </td>
+            <td class="to_be_hidden_firstly">
+               
+            </td>
+            <td>
+                
+            </td>
+            <td>
+               
+            </td>
+            <td class="to_be_hidden_secondly">
+                
+            </td>
+
+            </td>
+        </tr>
+    }
+
+</table>*@
+<script type="text/javascript">
+    function confirmPaymentInfo( buttID,orderID)
+    {
+        //alert("orderID : " + orderID + " buttonID : " + buttID+"  => "+typeof(buttID));
+        // alert(" buttonID : " + buttID + "  => " + typeof (buttID));
+        var myVar = setInterval(check, 15000);
+        var flag = false;
+        function check() {
+            $.ajax({
+
+                type: "GET",
+                url: "/../Paypal/checkOrderPayment",
+                success: function (response) {
+                    console.log(response + " => " + typeof (response));
+                    if (response == "True") {
+                        var buttonPay = document.getElementById(buttID);
+                        buttonPay.disabled = true;
+                        buttonPay.value = "Paid";
+                        buttonPay.style.backgroundColor = "green";
+                        var order_id = { id: orderID }
+                        $.ajax({
+
+                            type: "POST",
+                            url: "/../NormalCustomer/payOrder",
+                            data: order_id,
+                            success: function (response) {
+
+                                alert("you are done : " + response);
+                                clearInterval(myVar);
+                            }
+
+                        })
+
+                    }
+                }
+            })
+        }
+    
+    }
+
+    ///////////////////
+
+</script>
+
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

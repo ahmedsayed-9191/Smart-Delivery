@@ -1,0 +1,601 @@
+﻿
+/************************************************************/
+/*** start framework ***/
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.centered-underline:after {
+    content: "";
+    width: 30px;
+    height: 1.5px;
+    background-color: #5B95DE;
+    display: block;
+    margin: 10px auto;
+}
+
+/************/
+/*** navbar edits ***/
+/*.navbar-header img {
+    width: 164px;
+    height: 70px;
+}*/
+
+.navbar-default {
+    border: none;
+    background: #5296cf;
+}
+
+@media (min-width: 768px) {
+    .container-fluid > .navbar-collapse,
+    .container-fluid > .navbar-header,
+    .container > .navbar-collapse,
+    .container > .navbar-header {
+        margin-right: 5px;
+        margin-left: 0;
+    }
+}
+@media (min-width: 768px) {
+    .navbar {
+         border-radius:0;
+    }
+}
+
+.navbar-default .navbar-nav > li {
+    transition: all .2s ease-in;
+    margin-left: 1%;
+}
+
+    .navbar-default .navbar-nav > li > a {
+        color: white;
+        font-weight: bold;
+    }
+
+    .navbar-default .navbar-nav > li:hover a {
+        color: #337ab7;
+    }
+        .navbar-default .navbar-nav > li:hover {
+        background: #ffffffc7;
+        cursor:pointer;
+        border-radius: 5px;
+    }
+    .navbar-default .navbar-nav > li:hover {
+        background: #ffffffc7;
+        cursor:pointer;
+        border-radius: 5px;
+    }
+
+@media (min-width: 768px){
+.navbar-right {
+    float: right !important;
+    margin-right: -15px;
+    margin-top: 6px;
+    width: 80%;
+}
+}
+/*********************************************************************************/
+/****  Shared Classes  ****/
+.done-notification {
+    width: 300px;
+    height: 50px;
+    padding: 10px;
+    position: fixed;
+    font-size: 18px;
+    color: white;
+    right: -300px;
+    text-align: center;
+    border-radius: 3px;
+    z-index: 9999;
+    background-color: #2376BC;
+    opacity: .9;
+}
+
+.center-the-content {
+    width: 318px;
+    margin: auto;
+}
+
+    .center-the-content dt {
+        text-align: left;
+    }
+
+p a {
+    font-size: 23px;
+}
+
+    p a:hover {
+        text-decoration: none;
+    }
+
+.styled_link:hover {
+    text-decoration: none;
+}
+
+.styled_link {
+    font-size: 15px;
+    border: 1px solid;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+@media(max-width:668px) {
+    .to_be_hidden_firstly {
+        display: none;
+    }
+}
+
+@media(max-width:466px) {
+    .to_be_hidden_secondly {
+        display: none;
+    }
+
+    p a {
+        font-size: 15px;
+    }
+}
+
+@media(max-width:361px) {
+    .styled_link {
+        font-size: 13px;
+        border: 1px solid;
+        padding: 3px;
+        margin: 0px;
+    }
+}
+
+@media(max-width:688px) {
+    .styled_link {
+        font-size: 12px;
+        border: 1px solid;
+        padding: 3px;
+        margin: 1px;
+    }
+}
+
+.form-horizontal .control-label {
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.form-control {
+    margin-left: 10px;
+}
+
+.btn {
+    width: 200px;
+    display: block;
+    margin: auto;
+    padding: 10px;
+    background: none;
+    border: 2px solid #2399D5;
+    font-size: 15px;
+    font-weight: bold;
+    transition: all .3s ease-in-out;
+    letter-spacing: 1px;
+}
+
+    .btn:hover {
+        color: white;
+        background: #2399D5;
+    }
+
+@media(max-width:500px) {
+    .btn {
+        width: 150px;
+        padding: 7px;
+    }
+
+    .text-center {
+        font-size: 20px;
+    }
+}
+
+@media(max-width:500px) {
+    .done-notification {
+        display: none;
+    }
+}
+
+@media (min-width: 992px) {
+    .col-md-5 {
+        float: none;
+        display: block;
+        margin: auto;
+    }
+}
+
+.btn-link {
+    margin-top: 10px;
+}
+
+    .btn-link:hover {
+        border-color: #2399D5;
+        /*color: crimson;*/
+    }
+
+textarea {
+    width: 300px;
+    height: 100px;
+    font-size: 17px;
+    font-weight: 500;
+    border: 1px solid #2399D5;
+}
+
+.custom-textarea textarea {
+}
+/**** custom file ****/
+.custom-file {
+    background-color: #eee;
+    height: 30px;
+    border: 1px solid #ccc;
+    position: relative;
+    z-index: 1;
+}
+
+    .custom-file .file-name {
+        font-size: 14px;
+        display: block;
+    }
+
+    .custom-file input[type="file"] {
+        width: 100%;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 3;
+        cursor: pointer;
+    }
+
+    .custom-file:after {
+        content: "Upload";
+        background-color: #5B95DE;
+        color: #fff;
+        width: 100px;
+        height: 30px;
+        position: absolute;
+        top: -1px;
+        right: 0;
+        text-align: center;
+        line-height: 30px;
+    }
+/****************************************************/
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+.table > tfoot > tr > td,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > thead > tr > th {
+    padding: 10px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+}
+
+
+/******************************/
+.tip {
+    position: relative;
+}
+
+    /* Tooltip text */
+    .tip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #5B95DE;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+        position: absolute;
+        z-index: 1;
+        width: 120px;
+        top: 100%;
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 1s;
+        margin-top: 5px;
+    }
+
+    .tip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .tip .tooltiptext::after {
+        content: " ";
+        position: absolute;
+        bottom: 100%; /* At the top of the tooltip */
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent #5B95DE transparent;
+    }
+
+
+@media(max-width:993px) {
+    .to_be_hidden {
+        display: none;
+    }
+}
+/******************/
+select {
+    border: none;
+}
+
+    select option {
+        font-size: 15px;
+        line-height: 5px;
+        color: #2399D5;
+        font-weight: bold;
+    }
+/*******************/
+/*** my offers styles ***/
+.offer-block {
+    margin: 5px;
+    background: #EEE;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    padding: 15px;
+    letter-spacing: 1px;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0px 3px 5px 1px #CCC;
+}
+
+    .offer-block:hover {
+        box-shadow: 0 0 8px rgba(0, 0, 0, .25);
+    }
+
+    .offer-block span {
+        font-weight: bold;
+        color: #1a6eefbf;
+    }
+
+.details-section {
+    color: gray;
+}
+
+.details-header .header-title {
+    color: #5B95DE;
+    font-size: 18px;
+}
+
+@media(max-width:992px) {
+    .offer-block {
+        text-align: center;
+    }
+
+        .offer-block .image-section img {
+            width: 75px;
+            height: 75px;
+        }
+}
+
+@media(max-width:768px) {
+    .offer-block .details-section {
+        font-size: 12px;
+    }
+}
+
+@media(max-width:500px) {
+    .offer-block .details-section {
+        font-size: 10px;
+    }
+
+    .offer-block .image-section img {
+        width: 40px;
+        height: 40px;
+    }
+}
+/***********************/
+/*** my profile style ***/
+.profile-section{
+    margin-top:5%;
+}
+.profile-info {
+    line-height: 30px;
+    letter-spacing: 1px;
+}
+
+.profile-info {
+    border-left: 1px solid #18b8f1;
+}
+
+
+.image-and-contol img {
+    max-width: 300px;
+    max-height: 300px;
+    margin: auto;
+    display: block;
+    margin-bottom: 10%;
+}
+
+label {
+    color: #5B95DE;
+}
+
+@media(max-width:770px) {
+    .image-and-contol img {
+        margin-bottom: 10%;
+        width: 150px;
+        height: 150px;
+    }
+}
+
+@media(max-width:600px) {
+    .image-and-contol img {
+        margin-bottom: 10%;
+        width: 100px;
+        height: 100px;
+    }
+}
+
+@media(max-width:400px) {
+    .profile-control p a {
+        font-size: 10px;
+    }
+}
+
+@media(max-width:562px) {
+    .profile-info {
+        font-size: 12px;
+    }
+
+        .profile-info label {
+            display: block;
+        }
+}
+/****************/
+/** add offer style **/
+.add-offer-form input[type="submit"] {
+    margin-top: 5%;
+}
+
+.edit-offer-form .edit-offer-btn {
+    margin-top: 5%;
+}
+
+.left-part {
+    border-right: 1px solid #18b8f1;
+}
+
+@media(max-width:990px) {
+    .left-part {
+        border-right: none;
+    }
+}
+
+@media(max-width:420px) {
+    .add-offer-form label {
+        font-size: 12px;
+    }
+}
+
+
+.chat-icon:hover {
+    background: none !important;
+}
+
+/***********************/
+/* Dropdown Button */
+
+
+/* The container <div> - needed to position the dropdown content */
+/*.dropdown {
+    position: relative;
+    display: inline-block;
+}*/
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+        color: #5084A8 !important;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: all .4s ease;
+    }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #5296cf;
+            color: white !important;
+            font-weight:bold;
+        }
+.navbar-default .navbar-nav > li > a:focus{
+    color: white;
+    background-color: transparent;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+    margin-top: 1px;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+/*.dropdown:hover .dropbtn {background-color: #3e8e41;}*/
+
+
+/***************************/
+/*** All Purchases styles ***/
+.purchase-card {
+    height: auto;
+    background: #e9e9e991;
+    margin-bottom: 3%;
+    margin-top:2%;
+    padding: 1%;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    border-radius: 2%;
+    text-align:center;
+}
+.purchase-details{
+    margin-top:5%;
+}
+.purchase-details label ,.purchase-details span{
+    text-align:left;
+}
+/***************************/
+/*** delivery requests styles ***/
+.request-card {
+    height: auto;
+    background: #e9e9e991;
+    margin-bottom: 3%;
+    margin-top:2%;
+    padding: 1%;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    border-radius: 2%;
+    text-align:center;
+}
+.request-details{
+    margin-top:5%;
+    margin-bottom:3%;
+}
+.request-details label ,.request-details span{
+    text-align:left;
+}
+.request-description {
+    font-size: 20px;
+    color: #5B95DE;
+    letter-spacing: 1px;
+}
+.request-control{
+    margin-bottom:2%;
+}
+/***********************************/
+@media (min-width: 768px) {
+    .deliver-order-to-customer .modal-dialog {
+        width: 1084px;
+        margin: 30px auto;
+    }
+
+}
+.deliver-order-to-customer .modal-footer {
+    padding: 15px;
+    border-top: 0;
+}
+.deliver-order-to-customer .col-sm-12{
+    margin-bottom:2%;
+}
+
+/******************/
+.delivery-request-control{
+    margin-top:5%;
+    margin-bottom:2%;
+}

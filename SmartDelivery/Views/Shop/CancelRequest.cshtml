@@ -1,0 +1,154 @@
+﻿@model SmartDelivery.Models.DeliveryRequest
+
+@{
+    ViewBag.Title = "CancelRequest";
+    Layout = "~/Views/Shared/_shopLayout.cshtml";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+    function initAutocomplete() {
+
+        var geocoder = new google.maps.Geocoder;
+       
+
+        var service = new google.maps.DistanceMatrixService();
+        var sourceName = '@Model.Source';
+        var destinationName = '@Model.Destination';
+        var latlngStr1 = sourceName.split(',');
+        var latlngStr2 = destinationName.split(',');
+        var latlng1 = { lat: parseFloat(latlngStr1[0]), lng: parseFloat(latlngStr1[1]) };
+        var latlng2 = { lat: parseFloat(latlngStr2[0]), lng: parseFloat(latlngStr2[1]) };
+        
+        geocoder.geocode({ 'location': latlng1 }, function (results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+
+                    document.getElementById("_from").innerHTML = results[0].formatted_address;
+
+                } else {
+                    window.alert('No results found');
+                }
+            } else {
+                window.alert('Geocoder failed due to: ' + status);
+            }
+        });
+        geocoder.geocode({ 'location': latlng2 }, function (results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+
+                    document.getElementById("_to").innerHTML = results[0].formatted_address;
+
+                } else {
+                    window.alert('No results found');
+                }
+            } else {
+                window.alert('Geocoder failed due to: ' + status);
+            }
+        });
+
+         
+        service.getDistanceMatrix({
+            origins: [latlng1],
+            destinations: [latlng2],
+            travelMode: google.maps.TravelMode.DRIVING,
+            unitSystem: google.maps.UnitSystem.METRIC,
+            avoidHighways: false,
+            avoidTolls: false
+        }, function (response, status) {
+            if (status == google.maps.DistanceMatrixStatus.OK &&
+                            response.rows[0].elements[0].status != "ZERO_RESULTS") {
+                var distance = response.rows[0].elements[0].distance.value;
+                distance = distance / 1000;
+
+                var duration = response.rows[0].elements[0].duration.value;
+
+                duration = parseFloat(duration / 60).toFixed(2);
+                document.getElementById("_calculatedDistance").innerHTML = distance + " km";
+                document.getElementById("__deliveryTime").innerHTML = duration + " minutes";
+
+                
+
+            }
+        });
+
+        
+      
+
+
+    }//end initAuto
+
+
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARZj829jcIqy8ik7UKOwIT_CynjqIe4e0&libraries=places&callback=initAutocomplete"></script>
+
+<h2 class="text-center">CancelRequest</h2>
+<h3 class="text-center">Are you sure you want to Cancel this?</h3>
+
+<div class="center-the-content">
+    <hr />
+    <dl class="dl-horizontal">
+      
+        <dt>
+            @Html.DisplayNameFor(model => model.ShipmentDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShipmentDescription)
+        </dd>
+
+        
+        <dt>
+            @Html.DisplayNameFor(model => model.Source)
+        </dt>
+
+        <dd>
+            <label id="_from"></label>
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Destination)
+        </dt>
+
+        <dd>
+            <label id="_to"></label>
+        </dd>
+        <dt>
+            <label>Distance</label>
+        </dt>
+
+        <dd>
+            <label id="_calculatedDistance"></label>
+        </dd>
+
+        <dt>
+            <label>Expected Delivery Time</label>
+        </dt>
+
+        <dd>
+            <label id="__deliveryTime"></label>
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Cancel" class="btn" /> 
+        </div>
+    }
+</div>
+<a href="@Url.Action("ListDeliveryRequests")" class="back">
+    <i class="fa fa-arrow-left">Back</i>
+</a>
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

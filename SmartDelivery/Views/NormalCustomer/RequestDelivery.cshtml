@@ -1,0 +1,733 @@
+﻿@model SmartDelivery.Models.DeliveryRequest
+
+@{
+    ViewBag.Title = "RequestDelivery";
+    Layout = "~/Views/Shared/_normalcustomerLayout.cshtml";
+}
+<style>
+    body{
+        background:white;
+    }
+</style>
+<link rel="stylesheet" href="~/Content/Request_Delivery.CSS"/>
+
+<h2 class="text-center">Request Delivery</h2>
+<hr />
+
+@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+@*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>*@
+
+<!-- Scripts of the map -->
+<script type="text/javascript">
+    function initAutocomplete() {
+
+        var infoWindow = new google.maps.InfoWindow;
+        var infoWindow2 = new google.maps.InfoWindow;
+        var geocoder = new google.maps.Geocoder;
+
+        var marker = "";
+        var map = new google.maps.Map(document.getElementById('map'), {
+
+            zoom: 16,
+            mapTypeId: 'roadmap'
+        });
+
+
+
+        if (document.getElementById("confirmSource").checked == true && document.getElementById("confirmDestination").checked == true) {
+           
+                
+            var service = new google.maps.DistanceMatrixService();
+            var directionsService = new google.maps.DirectionsService();
+            var directionsDisplay = new google.maps.DirectionsRenderer();
+            var sourceName = $('#_source').val();
+            var destinationName = $('#_destination').val();
+            if (sourceName.localeCompare(destinationName) == 0)
+            {
+                alert("Error ! plz select different Sourse or Destination.");
+                var distance = document.getElementById("_distance");
+                var deliveryTime = document.getElementById("_deliveryTime");
+                var cost = document.getElementById("_cost");
+                var recievingCode = document.getElementById("_recievingCode");
+                //document.getElementById('pac-input').style.visibility = 'hidden';
+                distance.style.display = "none";
+                deliveryTime.style.display = "none";
+                cost.style.display = "none";
+                recievingCode.style.display = "none";
+                document.getElementById("Source").style.display = "block";
+                document.getElementById("Destination").style.display = "block";
+                document.getElementById("currentLocation").style.display = "block";
+                document.getElementById("From").style.display = "none";
+                document.getElementById("To").style.display = "none";
+                document.getElementById("_shipmentType").disabled = false;
+                document.getElementById('pac-input').style.visibility = 'hidden';
+                return;
+            }
+            var latlngStr1 = sourceName.split(',');
+            var latlngStr2 = destinationName.split(',');
+            var latlng1 = { lat: parseFloat(latlngStr1[0]), lng: parseFloat(latlngStr1[1]) };
+            var latlng2 = { lat: parseFloat(latlngStr2[0]), lng: parseFloat(latlngStr2[1]) };
+            map.setCenter(latlng1);
+            geocoder.geocode({ 'location': latlng1 }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+
+                        document.getElementById("_from").value = results[0].formatted_address;
+
+                    } else {
+                        window.alert('No results found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+            geocoder.geocode({ 'location': latlng2 }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+
+                        document.getElementById("_to").value = results[0].formatted_address;
+
+                    } else {
+                        window.alert('No results found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+
+            directionsDisplay.setMap(map);
+            var request = {
+                origin: latlng1,
+                destination: latlng2,
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                }
+            });
+
+            service.getDistanceMatrix({
+                origins: [latlng1],
+                destinations: [latlng2],
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC,
+                avoidHighways: false,
+                avoidTolls: false
+            }, function (response, status) {
+                if (status == google.maps.DistanceMatrixStatus.OK &&
+                              response.rows[0].elements[0].status != "ZERO_RESULTS") {
+                    var distance = response.rows[0].elements[0].distance.value;
+                    distance = distance / 1000;
+                    // get selected Cost
+
+                    if (distance > 500)
+
+                    {
+                        alert(distance + "km " + " Unsupported Distance! we Support Delivery Service till 400 km");
+                        location.reload();
+                        return;
+                    }
+                    var costIndex = document.getElementById("__deliveryCost").selectedIndex;
+                    var costValues = document.getElementById("__deliveryCost").options;
+                    var costPerKM = costValues[costIndex].text;
+
+                    var Cost = parseFloat(distance) * parseFloat(costPerKM);
+                    var duration = response.rows[0].elements[0].duration.value;
+
+                    duration = parseFloat(duration / 60).toFixed(2);
+                    document.getElementById("_calculatedDistance").value = distance + " km";
+                    document.getElementById("__deliveryTime").value = duration + " minutes";
+                    var TotalCost = document.getElementById("_totalCost");
+                    TotalCost.value = Cost;
+                    var RecievingCode = document.getElementById("_code");
+                    var code = ID();
+                    RecievingCode.value = parseInt(code);
+                    var desc = "desc";
+                    //////        Fill Payment Info    \\\\\\\\\
+                    if (document.getElementById("ShipmentDescription").value == "") {
+                        desc = "NOT fOUND";
+                    }
+                    else {
+                        desc = document.getElementById("ShipmentDescription").value;
+                    }
+
+
+                    document.getElementById("Description").value = desc;
+                    
+                    document.getElementById("RecievingCode").value = code;
+                  
+                    document.getElementById("Distance").value = parseFloat(distance);
+                    
+                    document.getElementById("costPerKM").value = parseInt(costPerKM);
+
+                    document.getElementById("buttCreate").disabled = false;
+                    document.getElementById("buttbay").disabled = false;
+              
+
+
+                }
+            });
+
+        }
+
+            //////// set source & destination points \\\\\\\\\\\\\\\
+        else {
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    infoWindow.setPosition(pos);
+
+                    map.setCenter(pos);
+                    // alert(pos.lat)
+                }, function () {
+                    
+                    
+                    var apiGeolocationSuccess = function (position) {
+                        
+                            var pos = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            };
+
+                            infoWindow.setPosition(pos);
+
+                            map.setCenter(pos);
+                        //alert("API geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
+                    };
+                    var tryAPIGeolocation = function () {
+                        jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyARZj829jcIqy8ik7UKOwIT_CynjqIe4e0", function (success) {
+                            apiGeolocationSuccess({ coords: { latitude: success.location.lat, longitude: success.location.lng } });
+                        })
+                      .fail(function (err) {
+                          alert("API Geolocation error! \n\n" + err);
+                      });
+                    };
+
+                    tryAPIGeolocation();
+
+                });
+            }
+
+
+            var input = document.getElementById('pac-input');
+            //var options = {
+            //    types: ['(cities)'],
+            //    componentRestrictions: { 'country': 'eg' }
+            //};
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            map.addListener('bounds_changed', function () {
+                searchBox.setBounds(map.getBounds());
+            });
+
+            // adds an event listener for the map, and creates a marker when the user clicks on the map at the clicked location.
+            var counter = 0;
+            var flag = false;
+            map.addListener('click', function (e) {
+                if (counter < 2 ) {
+                    
+                   
+                    if (!flag || document.getElementById("confirmSource").checked == true) {
+                        marker = new google.maps.Marker({
+                            position: e.latLng,
+                            map: map,
+                            animation: google.maps.Animation.BOUNCE,
+                            draggable: true
+                        });
+                        map.panTo(e.latLng);
+                        infoWindow = new google.maps.InfoWindow;
+
+                        infoWindow.open(map, marker);
+                    }
+                  
+                    
+                    if (counter == 1 && document.getElementById("confirmSource").checked == true) {
+                        infoWindow.setContent("---drag me to the End Point.");
+
+                        $('#_destination').val(marker.getPosition().lat() + "," + marker.getPosition().lng());
+                    }
+                    else if (counter == 1 && document.getElementById("confirmSource").checked == false)
+                    {
+                        alert("Confirm The start point plz.");
+
+
+                        return;
+
+                    }
+
+                    else {
+                        infoWindow.setContent("---drag me to the Start Point.");
+                        $('#_source').val(marker.getPosition().lat() + "," + marker.getPosition().lng());
+                        flag = true;
+                    }
+                    counter++;
+
+
+
+                }
+                
+                google.maps.event.addListener(marker, 'dragend', function () {
+                    var x = marker.getPosition().lat();
+                    var y = marker.getPosition().lng();
+
+                    if (document.getElementById("confirmSource").checked == true)
+                        $('#_destination').val(x + "," + y);
+
+                    else if (document.getElementById("confirmSource").checked == false)
+                        $('#_source').val(x + "," + y);
+
+                });
+            });
+
+
+
+
+
+
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                var bounds = new google.maps.LatLngBounds();
+                places.forEach(function (place) {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+
+                    marker = new google.maps.Marker({
+                        map: map,
+                        title: place.name,
+                        position: place.geometry.location,
+                        animation: google.maps.Animation.BOUNCE,
+                        draggable: true
+                    });
+                    if (document.getElementById("confirmSource").checked == false) {
+                        infoWindow.setContent("---drag me to the Start Point.");
+
+                    }
+                    else {
+
+                        infoWindow.setContent("---drag me to the End Point.");
+
+                    }
+
+                    infoWindow.open(map, marker);
+
+
+
+                    if (place.geometry.viewport) {
+
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+
+                google.maps.event.addListener(marker, 'dragend', function () {
+                    var x = marker.getPosition().lat();
+                    var y = marker.getPosition().lng();
+                    if (document.getElementById("confirmSource").checked == false)
+                        $('#_source').val(x + "," + y);
+                    else if (document.getElementById("confirmSource").checked == true)
+                        $('#_destination').val(x + "," + y);
+
+                });
+
+                map.fitBounds(bounds);
+            });
+
+        }
+    }
+    /////////////////////////////////////       Select Destination   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    function switchText() {
+        if (document.getElementById("confirmSource").checked == true) {
+            document.getElementById("pac-input").value = "";
+
+            document.getElementById("pac-input").placeholder = "ادخل مكان نهاية الشحن";
+
+        }
+        else if (document.getElementById("confirmSource").checked == false) {
+            document.getElementById("pac-input").value = "";
+
+            document.getElementById("pac-input").placeholder = "ادخل مكان بداية الشحن";
+        }
+        calculateInfo();
+    }
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    ////////////////////   calculate Distance , Cost , predictive Time         \\\\\\\\\\\\\\\\\\\
+
+    function calculateInfo() {
+
+        if (document.getElementById("confirmSource").checked == true && document.getElementById("confirmDestination").checked == true) {
+            var shipmentType = document.getElementById("_shipmentType");
+            if (shipmentType.selectedIndex == 0) {
+                var dvShipmentType = document.getElementById("_shipmentMess");
+                dvShipmentType.innerHTML = "";
+                dvShipmentType.innerHTML += "<h5>This Field Required.</h5>";
+
+                return;
+            }
+            else {
+
+                document.getElementById("_shipmentMess").style.display = "none";
+
+                var distance = document.getElementById("_distance");
+                var deliveryTime = document.getElementById("_deliveryTime");
+                var cost = document.getElementById("_cost");
+                var recievingCode = document.getElementById("_recievingCode");
+                document.getElementById('pac-input').style.visibility = 'hidden';
+                distance.style.display = "block";
+                deliveryTime.style.display = "block";
+                cost.style.display = "block";
+                recievingCode.style.display = "block";
+                document.getElementById("Source").style.display = "none";
+                document.getElementById("Destination").style.display = "none";
+                document.getElementById("currentLocation").style.display = "none";
+                document.getElementById("From").style.display = "block";
+                document.getElementById("To").style.display = "block";
+                document.getElementById("_shipmentType").disabled = true;
+
+                initAutocomplete();
+            }
+
+        }
+
+    }
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    /*
+    1-key1  AIzaSyARZj829jcIqy8ik7UKOwIT_CynjqIe4e0
+    2-key2  AIzaSyDohzVGcA6LnOTCA9doBW0fR8oWMVwxHAE
+
+    */
+    // set Current Location as start or end point \\\\\\\\\\\\\\\\\\
+    function setCurrentLocation(value) {
+        var index = value;
+        if (value != 0 && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                if (value == 1) {
+                    $('#_source').val(pos.lat + "," + pos.lng);
+                    document.getElementById("pac-input").value = "";
+                    document.getElementById("pac-input").placeholder = "ادخل مكان نهاية الشحن";
+                    calculateInfo();
+                }
+                else if (value == 2) {
+                    $('#_destination').val(pos.lat + "," + pos.lng);
+                    document.getElementById("pac-input").value = "";
+                    document.getElementById("pac-input").placeholder = "ادخل مكان بداية الشحن";
+                    calculateInfo();
+                }
+
+
+            }, function () {
+                var apiGeolocationSuccess = function (position) {
+
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    if (value == 1) {
+                        $('#_source').val(pos.lat + "," + pos.lng);
+                        document.getElementById("pac-input").value = "";
+                        document.getElementById("pac-input").placeholder = "ادخل مكان نهاية الشحن";
+                        calculateInfo();
+                    }
+                    else if (value == 2) {
+                        $('#_destination').val(pos.lat + "," + pos.lng);
+                        document.getElementById("pac-input").value = "";
+                        document.getElementById("pac-input").placeholder = "ادخل مكان بداية الشحن";
+                        calculateInfo();
+                    }
+                    //alert("API geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
+                };
+                var tryAPIGeolocation = function () {
+                    jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyARZj829jcIqy8ik7UKOwIT_CynjqIe4e0", function (success) {
+                        apiGeolocationSuccess({ coords: { latitude: success.location.lat, longitude: success.location.lng } });
+                    })
+                  .fail(function (err) {
+                      alert("API Geolocation error! \n\n" + err);
+                  });
+                };
+
+                tryAPIGeolocation();
+            });
+        }
+
+    }
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    //////////// generate Unique ID  for Recieving Code \\\\\\\\\\\\\\\
+    function uniqueNumber() {
+        var date = Date.now();
+
+        if (date <= uniqueNumber.previous) {
+            date = ++uniqueNumber.previous;
+        } else {
+            uniqueNumber.previous = date;
+        }
+
+        return date;
+    }
+
+    uniqueNumber.previous = 0;
+
+    function ID() {
+        var x = uniqueNumber();
+        x = x.toString();
+        x = x.substring(5, x.length);
+        return x;
+    };
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+    ////////// get the cost per kilometer
+
+    function changeCost(value) {
+        var index = value;
+
+        document.getElementById("ShipmentTypeID").value = value;
+        document.getElementById("__deliveryCost").selectedIndex = index;
+        calculateInfo();
+
+    }
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+   
+
+
+
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARZj829jcIqy8ik7UKOwIT_CynjqIe4e0&libraries=places&callback=initAutocomplete"></script>
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <!-- info section -->
+    <div class="form-horizontal info-section col-sm-6">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.CustomerID)
+        @Html.HiddenFor(model => model.StatusID)
+        @Html.HiddenFor(model => model.DeliveryManID)
+        @Html.HiddenFor(model => model.CurrentLocation)
+        <div class="form-group">
+
+            @Html.LabelFor(model => model.ShipmentDescription, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.ShipmentDescription, new { htmlAttributes = new {  @id = "ShipmentDescription", @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ShipmentDescription, "", new { @class = "text-danger" })
+                <label id="decsError" class="text-danger"></label>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ShipmentTypeID, "Shipment Type", htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.ShipmentTypeID, new { htmlAttributes = new { @id = "ShipmentTypeID", @class = "form-control", @type = "hidden" } })
+                @Html.DropDownList("ShipmentTypeID", null, "-Select Shipment Type-", htmlAttributes: new { @class = "form-control", @id = "_shipmentType", @onchange = "changeCost(this.value)" })
+
+                @Html.ValidationMessageFor(model => model.ShipmentTypeID, "", new { @class = "text-danger" })
+                <div id="_shipmentMess" class="text-danger"></div>
+            </div>
+        </div>
+
+
+        <div class="form-group" id="_deliveryCost" >
+            @Html.LabelFor(model => model.ShipmentType.PricePerKilo, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.DropDownList("CostperKM", null, "-", htmlAttributes: new { @disabled = "disabled", @class = "form-control", @id = "__deliveryCost" })
+
+            </div>
+        </div>
+        <div class="form-group" style="display:none">
+
+
+            @Html.EditorFor(model => model.Paid, new { htmlAttributes = new { @id = "_paid", @class = "form-control" } })
+
+        </div>
+
+
+        <div class="form-group" id="currentLocation">
+            <label class="control-label col-md-4">Set Current Location as </label>
+            <div class="col-md-8">
+                <select class="form-control" id="_currentLocation" onchange="setCurrentLocation(this.value)">
+                    <option value="0">No I will use Map</option>
+                    <option value="1">Start Point</option>
+                    <option value="2">End Point</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-group" id="Source">
+            @Html.LabelFor(model => model.Source, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Source, new { htmlAttributes = new { @id = "_source", @class = "form-control", @readonly = "readonly" } })
+                <input type="checkbox" id="confirmSource" value="confirm Start Point" onclick="switchText()"> confirm Start Point.
+                @Html.ValidationMessageFor(model => model.Source, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" id="Destination">
+            @Html.LabelFor(model => model.Destination, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Destination, new { htmlAttributes = new { @id = "_destination", @class = "form-control", @readonly = "readonly" } })
+                <input type="checkbox" id="confirmDestination" value="confirm End Point" onclick="calculateInfo()"> confirm End Point.
+                @Html.ValidationMessageFor(model => model.Destination, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" id="From" style="display:none">
+            <label class="control-label col-md-4">From </label>
+            <div class="col-md-8">
+                <input id="_from" , class="form-control" readonly />
+
+            </div>
+        </div>
+
+        <div class="form-group" id="To" style="display:none">
+            <label class="control-label col-md-4">To </label>
+            <div class="col-md-8">
+                <input id="_to" , class="form-control" readonly />
+
+            </div>
+        </div>
+
+        <div class="form-group" id="_distance" style="display:none">
+            <label class="control-label col-md-4">Distance</label>
+            <div class="col-md-8">
+                <input type="text" id="_calculatedDistance" class="form-control" readonly />
+
+            </div>
+        </div>
+        <div class="form-group" id="_deliveryTime" style="display:none">
+            <label class="control-label col-md-4">Expected Delivery Time</label>
+            <div class="col-md-8">
+                <input type="text" id="__deliveryTime" class="form-control" readonly />
+
+            </div>
+        </div>
+
+        <div class="form-group" id="_cost" style="display:none">
+            @Html.LabelFor(model => model.Cost, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Cost, new { htmlAttributes = new { @class = "form-control", @id = "_totalCost", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.Cost, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" id="_recievingCode" style="display:none">
+            @Html.LabelFor(model => model.RecievingCode, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.RecievingCode, new { htmlAttributes = new { @class = "form-control", @id = "_code", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.RecievingCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+      
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+
+                <input type="button" value="Pay With PayPal"
+                       id="buttbay" disabled="disabled"
+                       onclick="document.getElementById('buttonPay').click()" class="btn" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" id="buttCreate" value="Create Request"   class="btn" />
+            </div>
+        </div>
+    </div> 
+}
+
+<div class="map-section col-sm-6">
+    <input id="pac-input" type="text" placeholder="ادخل مكان بداية الشحن">
+    <div id="map" class="map"></div>
+</div>
+
+@using System.Configuration
+
+<!-- hidden form for paypal -->
+<div>
+    <form action="@ConfigurationManager.AppSettings["urlSubmitPayment"]" target="_blank">
+        <input type="hidden" name="cmd" value="_cart" />
+        <input type="hidden" name="upload" value="1" />
+        <input type="hidden" name="return" value="@ConfigurationManager.AppSettings["urlReturnForDeliveryBayment"]" />
+        <input type="hidden" name="business" value="@ConfigurationManager.AppSettings["accountBusiness"]" />
+
+        <input type="hidden" id="Description" name="@Url.Content("item_name_1")" value="" />
+        <input type="hidden" id="RecievingCode" name="@Url.Content("item_number_1")" value="" />
+        <input type="hidden" id="Distance" name="@Url.Content("amount_1")" value="" />
+        <input type="hidden" id="costPerKM" name="@Url.Content("quantity_1")" value="" />
+
+
+        <div class="col-md-12" style="align-content:center;display:none">
+            <input type="submit"  id="buttonPay" value="Pay With PayPal" onclick="confirmPaymentInfo()" class="btn btn-primary col-md-5" />
+        </div>
+    </form>
+</div> 
+
+
+<!-- paypal script -->
+<script type="text/javascript">
+
+    function confirmPaymentInfo()
+    {
+
+        var myVar = setInterval(check, 15000);
+        function check() {
+            $.ajax({
+
+                type: "GET",
+                url: "/../Paypal/checkPayment",
+                success: function (response) {
+                    console.log(response + " => " + typeof (response));
+                    if (response == "True") {
+                        var buttonPay = document.getElementById("buttbay");
+                        buttonPay.disabled = true;
+                        buttonPay.value = "Paid";
+                        buttonPay.style.backgroundColor = "green";
+                        clearInterval(myVar);
+                    }
+                }
+            })
+        }
+    }
+
+   
+    
+
+</script>  
+
+@*<script src="~/Scripts/Scripts.js"></script>*@
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

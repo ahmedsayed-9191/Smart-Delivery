@@ -1,0 +1,179 @@
+﻿@model SmartDelivery.Models.Employee
+
+@{
+    ViewBag.Title = "Details Of DeliveyMen";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<h2 class="text-center">DetailsOfDeliveyMen</h2>
+
+<div class="center-the-content">
+    <hr />
+
+    @*Status of DeliveryMan*@
+    @{
+        string status="";
+        if (Model.Authorized == 1)
+        {
+            status = "Authorized";
+        }
+        else if (Model.Authorized == 0)
+        {
+            status = "Panned";
+        }
+        else if (Model.Authorized == 2)
+        {
+            status = "Need For Approval";
+        }
+    }
+
+
+
+    <dl class="dl-horizontal">
+
+       
+            @if (Model.Photo != null)
+            {
+                var base64 = Convert.ToBase64String(Model.Photo);
+                var imgsrc = String.Format("data:image/gif;base64,{0}", base64);
+
+                <img src='@imgsrc' style="max-width:200px;max-height:200px" class="img-circle" />
+            }
+       
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+
+       
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.PassWord)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PassWord)
+        </dd>*@
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Salary)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Salary)
+        </dd>
+
+        <dt>
+            Status
+        </dt>
+
+        <dd>
+            @status.ToString()
+        </dd>
+
+        <dt>
+            Holiday
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Day.DayName)
+        </dd>
+
+        <dt>
+            Shift
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Shift.StartTime)
+        </dd>
+
+    </dl>
+
+    <p>
+
+
+        @if (Model.Authorized == 1)
+        {
+
+            using (Html.BeginForm("PanEmployee", "Admin", new { id = Model.ID }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="submit" value="Pan" class="btn-link styled_link done-btn" />
+            }
+
+        }
+        else if (Model.Authorized == 0)
+        {
+            using (Html.BeginForm("unPanEmployee", "Admin", new { id = Model.ID }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="submit" value="Authorize" class="btn-link styled_link done-btn" />
+            }
+
+        }
+        else if (Model.Authorized == 2)
+        {
+            using (Html.BeginForm("AcceptRequest", "Admin", new { id = Model.ID }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="submit" value="Accept" class="btn-link styled_link done-btn" />
+            }
+
+            using (Html.BeginForm("RefuseRequest", "Admin", new { id = Model.ID }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="submit" value="Refuse" class="btn-link styled_link" />
+            }
+
+        }
+
+
+    </p>
+</div>
+
+<a href="@Url.Action("ListAllDeliveyMen")" class="back">
+    <i class="fa fa-arrow-left">Back</i>
+</a>

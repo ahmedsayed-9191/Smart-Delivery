@@ -1,0 +1,61 @@
+﻿@model IEnumerable<SmartDelivery.Models.Offer>
+
+@{
+    ViewBag.Title = "ListAllOffers";
+    Layout = "~/Views/Shared/_shopLayout.cshtml";
+}
+
+<h2 class="text-center">All Offers</h2>
+
+<p>
+    @Html.ActionLink("Add New Offer", "AddOffer")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.OfferDescription)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.OfferDescription)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.StartDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EndDate)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+        <td>
+            @Html.ActionLink("Details", "OfferDetails", new { id = item.ID } ,new {@class= "styled_link" }) 
+            @Html.ActionLink("Edit", "EditOffer", new { id=item.ID }, new { @class = "styled_link" }) 
+            @Html.ActionLink("Delete", "DeleteOffer", new { id=item.ID }, new { @class = "styled_link" })
+        </td>
+    </tr>
+}
+
+</table>
+@section scripts {
+    <!--will not reffenced as it alreed on layout -->
+    <!--<script src="~/Scripts/jquery-3.2.1.min.js"></script> -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
+    <script type="text/javascript"> var MyType = '@Session["userType"]';</script>
+    <script type="text/javascript"> var Myuser_name = '@Session["userName"]';</script>
+    <script type="text/javascript" src="~/Scripts/SignalR_AllViews.js"></script>
+}

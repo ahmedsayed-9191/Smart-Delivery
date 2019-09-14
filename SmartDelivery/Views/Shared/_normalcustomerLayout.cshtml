@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/SystemActors_Styles.css" />
+    <link rel="stylesheet" href="~/Content/mystyle.CSS" />
+    <link rel="stylesheet" href="~/Content/font-awesome.min.css" />
+
+    <link rel="icon" href="~/Content/Images/site-icon.png" />
+    <link rel="stylesheet" href="~/Content/MessageNotifications.css" />
+
+</head>
+<body>
+    <style>
+        body {
+            background: #DDDDDD;
+        }
+
+        .content-container {
+            background: white;
+        }
+
+        .navbar {
+            position: relative;
+            min-height: 50px;
+            margin-bottom: 0;
+            border: 1px solid transparent;
+        }
+    </style>
+    <div class="frame" id="frame"></div>
+    <!--*** Start navbar ***-->
+    <nav class="navbar navbar-default container">
+
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <!--*** Start brand ***-->
+                @if (TempData["msg10"] != null)
+                {
+                    @Html.Raw(TempData["msg10"])
+                    TempData["msg10"] = null;
+                }
+                @*@Html.ActionLink("smart delivery", "Index", "Home", new { @class = "navbar-brand uppercase" })*@
+                <a href="@Url.Action("Index","Home")" title="Home"> <img src="~/Content/Images/mylogo.png"/> </a>
+                <!--*** End brand ***-->
+            </div>
+
+            <div class="collapse navbar-collapse"
+                 id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="~/NormalCustomer/RequestDelivery">Request Delivery</a></li>
+                    
+                    <li><a href="~/NormalCustomer/ViewHome">My Offers</a></li>
+                    <li><a href="~/NormalCustomer/ListDeliveryRequests">My Delivery Requests</a></li>
+                    <li><a href="~/NormalCustomer/ListAllPurchases">My Purchases</a></li>
+                    @if (Session["userName"] != null)
+                    {
+                        <li class="dropdown last-dropdown">
+                            <a class="dropbtn">@Session["userName"].ToString()</a>
+                            <div class="dropdown-content">
+                                <a href="~/NormalCustomer/ViewProfile">My Profile</a>
+
+                                @Html.ActionLink("LogOut", "LogOut", "home")
+                            </div>
+                        </li>
+                    }
+                    <!--  start of messages notification-->
+                    <li class="chat-icon">
+                        <div class="noti-icon" id="chatnotifications" data-ispoen="false">
+                            <span class="notify-counter" id="notificationsCountValue"> </span>
+                            <i class="fa fa-envelope fa-2x"></i>
+                            <div class="notify-content" id="notificationsContent">
+                                <div class="header-of-messages"><p>Recent Messages</p></div>
+                            </div>
+                        </div>
+                    </li>
+                    <!--  end of messages notification-->
+
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!--***End container***-->
+    </nav>
+    <!--*** End navbar ***-->
+
+    <div class="done-notification">
+        Done!
+    </div>
+
+    <!--*** index body ***-->
+    <div class="container content-container">
+        @RenderBody()
+    </div>
+
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/Scripts.js"></script>
+    @RenderSection("scripts", false)
+</body>
+</html>
